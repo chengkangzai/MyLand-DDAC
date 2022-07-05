@@ -1,0 +1,66 @@
+﻿@using MyLand.Areas.Identity.Data;
+
+@model IEnumerable<MyLand.Areas.Identity.Data.MyLandUser>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>User</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.UserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserFirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserLastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserRole)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            <td>
+                @Html.DisplayNameFor(modelItem => item.UserFirstName)
+            </td>
+            <td>
+                @Html.DisplayNameFor(modelItem => item.UserLastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserAddress)
+            </td>
+            <td>
+                <form asp-action="MakeAdmin" asp-route-username="@item.UserName">
+                    <input type="submit" value="Make Admin" class="btn btn-danger" />
+                </form>
+            </td>
+            <td>
+                <form asp-action="MakeUser" asp-route-username="@item.UserName">
+                    <input type="submit" value="Make User" class="btn btn-danger" />
+                </form>
+            </td>
+            <td>
+                <form asp-action="Delete" asp-route-username="@item.UserName">
+                    <input type="submit" value="Delete" class="btn btn-danger" />
+                </form>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
