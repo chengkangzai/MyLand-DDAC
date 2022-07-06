@@ -27,8 +27,6 @@ namespace MyLand
         {
             services.AddControllersWithViews();
             services.AddRazorPages();
-            services.AddDbContext<MyLandListingContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("MyLandListingContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
