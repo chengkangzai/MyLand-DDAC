@@ -11,13 +11,13 @@ using Microsoft.AspNetCore.Identity;
 using MyLand.Areas.Identity.Data;
 
 
-namespace MyLand.Views.User
+namespace MyLand.Controllers
 {
     public class UsersController : Controller
     {
         private readonly UserManager<MyLandUser> _userManager;
         private readonly SignInManager<MyLandUser> _signInManager;
-        public UsersController(MyLandListingContext context, 
+        public UsersController(
             UserManager<MyLandUser> userManager, 
             SignInManager<MyLandUser> signInManager)
         {
