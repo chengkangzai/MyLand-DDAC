@@ -22,19 +22,13 @@ namespace MyLand.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<MyLandUser> _signInManager;
         private readonly UserManager<MyLandUser> _userManager;
-        private readonly ILogger<RegisterModel> _logger;
-        private readonly IEmailSender _emailSender;
 
         public RegisterModel(
             UserManager<MyLandUser> userManager,
-            SignInManager<MyLandUser> signInManager,
-            ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            SignInManager<MyLandUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _logger = logger;
-            _emailSender = emailSender;
         }
 
         [BindProperty]
@@ -99,8 +93,9 @@ namespace MyLand.Areas.Identity.Pages.Account
                 {
                     userRole = 1;
                 }
-                var user = new MyLandUser { 
-                    UserName = Input.Email, 
+                var user = new MyLandUser
+                {
+                    UserName = Input.Email,
                     Email = Input.Email,
                     UserFirstName = Input.UserFirstName,
                     UserLastName = Input.UserLastName,
