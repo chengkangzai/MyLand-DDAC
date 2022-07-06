@@ -84,35 +84,37 @@ namespace MyLand.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl = returnUrl ?? Url.Content("~/");
+            returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var userRole = 0;
-                if (Input.Email == "admin@myland.com")
-                {
-                    userRole = 1;
-                }
-                var user = new MyLandUser
-                {
-                    UserName = Input.Email,
-                    Email = Input.Email,
-                    UserFirstName = Input.UserFirstName,
-                    UserLastName = Input.UserLastName,
-                    UserAddress = Input.UserAddress,
-                    UserTelephone = Input.UserTelephone,
-                    UserRole = userRole
-                };
-                var result = await _userManager.CreateAsync(user, Input.Password);
-                if (result.Succeeded)
-                {
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    return LocalRedirect(returnUrl);
-                }
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+                return Page();
+            }
+
+            var userRole = 0;
+            if (Input.Email == "admin@myland.com")
+            {
+                userRole = 1;
+            }
+            var user = new MyLandUser
+            {
+                UserName = Input.Email,
+                Email = Input.Email,
+                UserFirstName = Input.UserFirstName,
+                UserLastName = Input.UserLastName,
+                UserAddress = Input.UserAddress,
+                UserTelephone = Input.UserTelephone,
+                UserRole = userRole
+            };
+            var result = await _userManager.CreateAsync(user, Input.Password);
+            if (result.Succeeded)
+            {
+                await _signInManager.SignInAsync(user, isPersistent: false);
+                return LocalRedirect(returnUrl);
+            }
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
             }
 
             // If we got this far, something failed, redisplay form
