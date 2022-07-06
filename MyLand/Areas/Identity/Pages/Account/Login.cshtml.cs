@@ -20,15 +20,12 @@ namespace MyLand.Areas.Identity.Pages.Account
     {
         private readonly UserManager<MyLandUser> _userManager;
         private readonly SignInManager<MyLandUser> _signInManager;
-        private readonly ILogger<LoginModel> _logger;
 
         public LoginModel(SignInManager<MyLandUser> signInManager,
-            ILogger<LoginModel> logger,
             UserManager<MyLandUser> userManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _logger = logger;
         }
 
         [BindProperty]
@@ -87,16 +84,10 @@ namespace MyLand.Areas.Identity.Pages.Account
             var result = await _signInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
             if (result.Succeeded)
             {
-                _logger.LogInformation("User logged in.");
                 return LocalRedirect(returnUrl);
-            }
-            if (result.RequiresTwoFactor)
-            {
-                return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
             }
             if (result.IsLockedOut)
             {
-                _logger.LogWarning("User account locked out.");
                 return RedirectToPage("./Lockout");
             }
 
