@@ -3,10 +3,6 @@
     "mssql1": {
       "type": "mssql.local",
       "connectionId": "ConnectionStrings:MyLandContextConnection"
-    },
-    "mssql2": {
-      "type": "mssql.local",
-      "connectionId": "ConnectionStrings:MyLandListingContext"
     }
   }
 }
