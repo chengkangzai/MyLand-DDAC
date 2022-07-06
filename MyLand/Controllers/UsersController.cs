@@ -28,13 +28,29 @@ namespace MyLand.Views.User
         // GET: Users
         public async Task<IActionResult> Index()
         {
-            var users = await _userManager.Users.ToListAsync();
-            foreach (var user in users)
+            if (_signInManager.IsSignedIn(User))
             {
-                if(user.UserRole == 1) { user.UserAddress = "Admin"; }
-                else { user.UserAddress = "User"; }
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                }
+                if (user.UserRole == 1)
+                {
+                    var users = await _userManager.Users.ToListAsync();
+                    foreach (var item in users)
+                    {
+                        if (item.UserRole == 1) { user.UserAddress = "Admin"; }
+                        else { user.UserAddress = "User"; }
+                    }
+                    return View(users);
+                }
+                else
+                {
+                    return NotFound($"Only admin may delete");
+                }
             }
-            return View(users);
+            return NotFound($"User login required");
         }
 
         [HttpPost, ActionName("Delete")]
@@ -103,7 +119,7 @@ namespace MyLand.Views.User
                 {
                     return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
                 }
-                if (true)
+                if (user.UserRole == 1)
                 {
                     if (username == null) { return NotFound(); }
                     var targetUser = await _userManager.FindByNameAsync(username);

@@ -3,10 +3,27 @@
 
 @inject SignInManager<MyLandUser> SignInManager
 @inject UserManager<MyLandUser> UserManager
+@{
+    var role = "guest";
+    if (SignInManager.IsSignedIn(User))
+    {
+        var user = await UserManager.GetUserAsync(User);
+        if (user != null)
+        {
+            if (user.UserRole == 0)
+            { role = "user"; }
+            if (user.UserRole == 1)
+            { role = "admin"; }   
+        }
+    }
+}
 
 <ul class="navbar-nav">
-@if (SignInManager.IsSignedIn(User))
+@if (role == "user")
 {
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Listings" asp-action="Manage">My Listings</a>
+    </li>
     <li class="nav-item">
         <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
     </li>
@@ -16,7 +33,24 @@
         </form>
     </li>
 }
-else
+@if (role == "admin")
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Listings" asp-action="Moderate">Moderate Listings</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Moderate Users</a>
+    </li>
+    <li class="nav-item">
+        <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
+    </li>
+    <li class="nav-item">
+        <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+            <button id="logout" type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+        </form>
+    </li>
+}
+@if (role == "guest")
 {
     <li class="nav-item">
         <a class="nav-link text-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>

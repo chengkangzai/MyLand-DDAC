@@ -1,17 +1,12 @@
 ﻿@model IEnumerable<MyLand.Models.Listing>
 
 @{
-    ViewData["Title"] = "Manage";
+    ViewData["Title"] = "Moderate";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Moderate Listing</h1>
 
-<p>
-    <form asp-action="Create">
-        <input type="submit" value="Create" class="btn btn-danger" />
-    </form>
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -32,6 +27,9 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ListingDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserName)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ListingActive)
@@ -58,19 +56,19 @@
             <td>
                 @Html.DisplayFor(modelItem => item.ListingSize)
             </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
             <th>
                 @if(item.ListingActive == 1) { @Html.Raw("Active") }
                 else{ @Html.Raw("Inactive") }
             </th>
             <td colspan="2">
-                <form asp-action="Edit" asp-route-id="@item.ListingId">
-                    <input type="submit" value="Edit" class="btn btn-danger" />
-                </form>
                 <form asp-action="Details" asp-route-id="@item.ListingId">
-                    <input type="submit" value="Details" class="btn btn-danger" />
+                    <input type="submit" value="Details" class="btn btn-primary" />
                 </form>
-                <form asp-action="Deactivate" asp-route-id="@item.ListingId">
-                    <input type="submit" value="Deactivate" class="btn btn-danger" />
+                <form asp-action="Delete" asp-route-id="@item.ListingId">
+                    <input type="submit" value="Delete" class="btn btn-danger" />
                 </form>
             </td>
         </tr>
