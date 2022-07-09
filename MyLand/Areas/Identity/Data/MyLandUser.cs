@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using MyLand.Models;
 
 namespace MyLand.Areas.Identity.Data
 {
@@ -20,6 +21,6 @@ namespace MyLand.Areas.Identity.Data
         [PersonalData]
         public int Role { get; set; }
         [PersonalData]
-        public virtual ICollection<MyLand.Models.Property> Properties { get; set; }
+        public virtual ICollection<Property> Properties { get; set; }
     }
 }
