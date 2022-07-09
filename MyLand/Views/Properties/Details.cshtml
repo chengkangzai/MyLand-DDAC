@@ -51,7 +51,8 @@
             @Html.DisplayNameFor(model => model.Date)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Date)
+            @{ string parsedDate = Model.Date.ToString("HH:mm dd/mm/yy"); }
+            @Html.DisplayFor(model => parsedDate)
         </dd>
         <form asp-action="Notify" asp-route-id="@Model.Id">
             <input type="submit" value="Notify" class="btn btn-primary" />

@@ -41,7 +41,7 @@ namespace MyLand.Controllers
                 //TODO Change name to S3 image link
                 item.Photo = "~/imgs/"+item.Photo;
                     
-                if (item.Active == 1)
+                if (item.IsActive == 1)
                 { filteredList.Add(item); }
             }
             return View(properties);
@@ -128,7 +128,9 @@ namespace MyLand.Controllers
                 if (user == null)
                 { return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'."); }
                 property.UserId = user.Id;
-                property.Active = 1;
+                property.IsActive = 1;
+                property.Date = DateTime.Now;
+
                 if (ModelState.IsValid)
                 {
                     _context.Add(property);
@@ -175,7 +177,7 @@ namespace MyLand.Controllers
                 if (target.UserId == user.Id | user.Role == 1) {
                     if (ModelState.IsValid) {
                         property.User.UserName = target.User.UserName;
-                        property.Active = 1;
+                        property.IsActive = 1;
                         try {
                             _context.Update(property);
                             await _context.SaveChangesAsync();
@@ -263,7 +265,7 @@ namespace MyLand.Controllers
                 if (property == null) { return NotFound(); }
                 if (user.Role == 1 | user.Id == property.UserId)
                 {
-                    property.Active = 0;
+                    property.IsActive = 0;
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Manage));
                 }

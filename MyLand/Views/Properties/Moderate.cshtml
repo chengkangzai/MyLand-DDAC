@@ -32,7 +32,7 @@
                 @Html.DisplayNameFor(model => model.User.UserName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Active)
+                @Html.DisplayNameFor(model => model.IsActive)
             </th>
             <th></th>
             <th></th>
@@ -57,10 +57,14 @@
                 @Html.DisplayFor(modelItem => item.Size)
             </td>
             <td>
+                @{ string parsedDate = item.Date.ToString("dd/mm/yy"); }
+                @Html.DisplayFor(modelItem => parsedDate)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.UserId)
             </td>
             <th>
-                @if(item.Active == 1) { @Html.Raw("Active") }
+                @if(item.IsActive == 1) { @Html.Raw("Active") }
                 else{ @Html.Raw("Inactive") }
             </th>
             <td colspan="2">

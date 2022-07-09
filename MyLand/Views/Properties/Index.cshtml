@@ -58,7 +58,8 @@
             @Html.DisplayFor(modelItem => item.Size)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Date)
+            @{ string parsedDate = item.Date.ToString("dd/mm/yy"); }
+            @Html.DisplayFor(modelItem => parsedDate))
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.UserId)
