@@ -9,15 +9,20 @@ namespace MyLand.Models
         [Key]
         public int Id { get; set; }
         public PropertyType Type { get; set; }
+        [Required]
         public string Title { get; set; }
+        [Required]
         public string Description { get; set; }
+        [Required]
         public int Price { get; set; }
+        [Required]
         public int Size { get; set; }
         public string Photo { get; set; }
+        [Required]
         public System.DateTime Date { get; set; }
-        public string UserId { get; set; }
         public virtual MyLandUser User { get; set; }
-        public int IsActive { get; set; }
+        [Required]
+        public bool IsActive { get; set; }
     }
     
     public enum PropertyType
