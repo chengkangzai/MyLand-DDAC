@@ -10,7 +10,7 @@ using MyLand.Data;
 namespace MyLand.Migrations
 {
     [DbContext(typeof(MyLandContext))]
-    [Migration("20220706163625_initdb")]
+    [Migration("20220709145434_initdb")]
     partial class initdb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -164,6 +164,9 @@ namespace MyLand.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -174,6 +177,12 @@ namespace MyLand.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -198,30 +207,21 @@ namespace MyLand.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Telephone")
+                        .HasColumnType("int");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
-                    b.Property<string>("UserAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserFirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserLastName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("UserName")
                         .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
-
-                    b.Property<int>("UserRole")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserTelephone")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -236,43 +236,52 @@ namespace MyLand.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("MyLand.Models.Listing", b =>
+            modelBuilder.Entity("MyLand.Models.Property", b =>
                 {
-                    b.Property<int>("ListingId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ListingActive")
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MyLandUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Photo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Price")
                         .HasColumnType("int");
 
-                    b.Property<string>("ListingDate")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ListingDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ListingPhoto")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ListingPrice")
+                    b.Property<int>("Size")
                         .HasColumnType("int");
 
-                    b.Property<int>("ListingSize")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ListingTitle")
+                    b.Property<string>("Title")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ListingType")
+                    b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("ListingId");
+                    b.HasKey("Id");
 
-                    b.ToTable("Listing");
+                    b.HasIndex("MyLandUserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Property");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -324,6 +333,17 @@ namespace MyLand.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MyLand.Models.Property", b =>
+                {
+                    b.HasOne("MyLand.Areas.Identity.Data.MyLandUser", null)
+                        .WithMany()
+                        .HasForeignKey("MyLandUserId");
+
+                    b.HasOne("MyLand.Areas.Identity.Data.MyLandUser", "User")
+                        .WithMany("Properties")
+                        .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618
         }

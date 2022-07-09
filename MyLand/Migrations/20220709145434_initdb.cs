@@ -40,36 +40,15 @@ namespace MyLand.Migrations
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
-                    UserFirstName = table.Column<string>(nullable: true),
-                    UserLastName = table.Column<string>(nullable: true),
-                    UserAddress = table.Column<string>(nullable: true),
-                    UserTelephone = table.Column<int>(nullable: false),
-                    UserRole = table.Column<int>(nullable: false)
+                    FirstName = table.Column<string>(nullable: true),
+                    LastName = table.Column<string>(nullable: true),
+                    Address = table.Column<string>(nullable: true),
+                    Telephone = table.Column<int>(nullable: false),
+                    Role = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Listing",
-                columns: table => new
-                {
-                    ListingId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ListingType = table.Column<int>(nullable: false),
-                    ListingTitle = table.Column<string>(nullable: true),
-                    ListingDescription = table.Column<string>(nullable: true),
-                    ListingPrice = table.Column<int>(nullable: false),
-                    ListingSize = table.Column<int>(nullable: false),
-                    ListingPhoto = table.Column<string>(nullable: true),
-                    ListingDate = table.Column<string>(nullable: true),
-                    UserName = table.Column<string>(nullable: true),
-                    ListingActive = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Listing", x => x.ListingId);
                 });
 
             migrationBuilder.CreateTable(
@@ -178,6 +157,40 @@ namespace MyLand.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Property",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Type = table.Column<int>(nullable: false),
+                    Title = table.Column<string>(nullable: false),
+                    Description = table.Column<string>(nullable: false),
+                    Price = table.Column<int>(nullable: false),
+                    Size = table.Column<int>(nullable: false),
+                    Photo = table.Column<string>(nullable: true),
+                    Date = table.Column<DateTime>(nullable: false),
+                    UserId = table.Column<string>(nullable: true),
+                    IsActive = table.Column<bool>(nullable: false),
+                    MyLandUserId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Property", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Property_AspNetUsers_MyLandUserId",
+                        column: x => x.MyLandUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Property_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -216,6 +229,16 @@ namespace MyLand.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Property_MyLandUserId",
+                table: "Property",
+                column: "MyLandUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Property_UserId",
+                table: "Property",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -236,7 +259,7 @@ namespace MyLand.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Listing");
+                name: "Property");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
