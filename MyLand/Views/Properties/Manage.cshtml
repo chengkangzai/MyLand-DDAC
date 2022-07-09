@@ -1,0 +1,97 @@
+﻿@model IEnumerable<MyLand.Models.Property>
+
+@{
+    ViewData["Title"] = "Manage";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+@Html.ActionLink("Create", "Create", "Properties", new
+{
+    area = ""
+}, new
+{
+    @class = "btn btn-primary"
+})
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Type)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Price)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Size)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsActive)
+        </th>
+        <th></th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Size)
+            </td>
+            <td>
+                @(item.Date.ToString("HH:mm dd/mm/yy"))
+            </td>
+            <th>
+
+            </th>
+            <td colspan="2">
+                @Html.ActionLink("Edit", "Edit", "Properties",
+                    new
+                    {
+                        area = "",
+                        id = item.Id
+                    }, new
+                    {
+                        @class = "btn btn-primary"
+                    })
+
+                @Html.ActionLink("Details", "Details", "Properties",
+                    new
+                    {
+                        area = "",
+                        id = item.Id
+                    }, new
+                    {
+                        @class = "btn btn-primary"
+                    })
+                <form asp-action="Deactivate" asp-route-id="@item.Id">
+                    <input type="submit" value="Deactivate" class="btn btn-danger"/>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,0 +1,112 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using MyLand.Data;
+using MyLand.Models;
+using Microsoft.AspNetCore.Identity;
+using MyLand.Areas.Identity.Data;
+
+
+namespace MyLand.Controllers
+{
+    [Authorize]
+    public class UsersController : Controller
+    {
+        private readonly UserManager<MyLandUser> _userManager;
+
+        public UsersController(UserManager<MyLandUser> userManager)
+        {
+            _userManager = userManager;
+        }
+
+        // GET: Users
+        public async Task<IActionResult> Index()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user.Role != 1)
+            {
+                return Unauthorized();
+            }
+            var users = await _userManager.Users.ToListAsync();
+            foreach (var item in users)
+            {
+                user.Address = item.Role == 1 ? "Admin" : "User";
+            }
+            return View(users);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(string username)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user.Role != 1)
+            {
+                return Unauthorized();
+            }
+            if (username == null)
+            {
+                return NotFound();
+            }
+            var targetUser = await _userManager.FindByNameAsync(username);
+            if (targetUser == null)
+            {
+                return NotFound();
+            }
+            await _userManager.DeleteAsync(targetUser);
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MakeUser(string username)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user.Role != 1)
+            {
+                return NotFound($"Only admin may change role");
+            }
+            if (username == null)
+            {
+                return NotFound();
+            }
+            var targetUser = await _userManager.FindByNameAsync(username);
+            if (targetUser == null)
+            {
+                return NotFound();
+            }
+            targetUser.Role = 0;
+            await _userManager.UpdateAsync(targetUser);
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MakeAdmin(string username)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user.Role != 1)
+            {
+                return NotFound($"Only admin may change role");
+            }
+            
+            if (username == null)
+            {
+                return NotFound();
+            }
+            var targetUser = await _userManager.FindByNameAsync(username);
+            if (targetUser == null)
+            {
+                return NotFound();
+            }
+            targetUser.Role = 1;
+            await _userManager.UpdateAsync(targetUser);
+            return RedirectToAction(nameof(Index));
+        }
+    }
+}
