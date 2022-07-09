@@ -35,13 +35,13 @@ namespace MyLand.Controllers
                 {
                     return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
                 }
-                if (user.UserRole == 1)
+                if (user.Role == 1)
                 {
                     var users = await _userManager.Users.ToListAsync();
                     foreach (var item in users)
                     {
-                        if (item.UserRole == 1) { user.UserAddress = "Admin"; }
-                        else { user.UserAddress = "User"; }
+                        if (item.Role == 1) { user.Address = "Admin"; }
+                        else { user.Address = "User"; }
                     }
                     return View(users);
                 }
@@ -64,7 +64,7 @@ namespace MyLand.Controllers
                 {
                     return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
                 }
-                if (user.UserRole == 1)
+                if (user.Role == 1)
                 {
                     if (username == null) { return NotFound(); }
                     var targetUser = await _userManager.FindByNameAsync(username);
@@ -91,12 +91,12 @@ namespace MyLand.Controllers
                 {
                     return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
                 }
-                if (user.UserRole == 1)
+                if (user.Role == 1)
                 {
                     if (username == null) { return NotFound(); }
                     var targetUser = await _userManager.FindByNameAsync(username);
                     if (targetUser == null) { return NotFound(); }
-                    targetUser.UserRole = 0;
+                    targetUser.Role = 0;
                     await _userManager.UpdateAsync(targetUser);
                     return RedirectToAction(nameof(Index));
                 }
@@ -119,12 +119,12 @@ namespace MyLand.Controllers
                 {
                     return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
                 }
-                if (user.UserRole == 1)
+                if (user.Role == 1)
                 {
                     if (username == null) { return NotFound(); }
                     var targetUser = await _userManager.FindByNameAsync(username);
                     if (targetUser == null) { return NotFound(); }
-                    targetUser.UserRole = 1;
+                    targetUser.Role = 1;
                     await _userManager.UpdateAsync(targetUser);
                     return RedirectToAction(nameof(Index));
                 }

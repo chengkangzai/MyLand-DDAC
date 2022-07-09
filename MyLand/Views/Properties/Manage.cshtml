@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MyLand.Models.Listing>
+﻿@model IEnumerable<MyLand.Models.Property>
 
 @{
     ViewData["Title"] = "Manage";
@@ -16,25 +16,25 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ListingType)
+                @Html.DisplayNameFor(model => model.Type)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ListingTitle)
+                @Html.DisplayNameFor(model => model.Title)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ListingDescription)
+                @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ListingPrice)
+                @Html.DisplayNameFor(model => model.Price)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ListingSize)
+                @Html.DisplayNameFor(model => model.Size)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ListingDate)
+                @Html.DisplayNameFor(model => model.Date)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ListingActive)
+                @Html.DisplayNameFor(model => model.Active)
             </th>
             <th></th>
             <th></th>
@@ -44,32 +44,32 @@
     @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.ListingType)
+                @Html.DisplayFor(modelItem => item.Type)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ListingTitle)
+                @Html.DisplayFor(modelItem => item.Title)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ListingDescription)
+                @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ListingPrice)
+                @Html.DisplayFor(modelItem => item.Price)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ListingSize)
+                @Html.DisplayFor(modelItem => item.Size)
             </td>
             <th>
-                @if(item.ListingActive == 1) { @Html.Raw("Active") }
+                @if(item.Active == 1) { @Html.Raw("Active") }
                 else{ @Html.Raw("Inactive") }
             </th>
             <td colspan="2">
-                <form asp-action="Edit" asp-route-id="@item.ListingId">
+                <form asp-action="Edit" asp-route-id="@item.Id">
                     <input type="submit" value="Edit" class="btn btn-danger" />
                 </form>
-                <form asp-action="Details" asp-route-id="@item.ListingId">
+                <form asp-action="Details" asp-route-id="@item.Id">
                     <input type="submit" value="Details" class="btn btn-danger" />
                 </form>
-                <form asp-action="Deactivate" asp-route-id="@item.ListingId">
+                <form asp-action="Deactivate" asp-route-id="@item.Id">
                     <input type="submit" value="Deactivate" class="btn btn-danger" />
                 </form>
             </td>

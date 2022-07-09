@@ -36,21 +36,21 @@ namespace MyLand.Areas.Identity.Pages.Account.Manage
             [Required]
             [StringLength(100, ErrorMessage = "First name cannot be empty", MinimumLength = 1)]
             [Display(Name = "First Name")]
-            public string UserFirstName { get; set; }
+            public string FirstName { get; set; }
 
             [Required]
             [StringLength(100, ErrorMessage = "Last name cannot be empty", MinimumLength = 1)]
             [Display(Name = "Last Name")]
-            public string UserLastName { get; set; }
+            public string LastName { get; set; }
 
             [Required]
             [StringLength(100, ErrorMessage = "Address cannot be empty", MinimumLength = 1)]
             [Display(Name = "Address")]
-            public string UserAddress { get; set; }
+            public string Address { get; set; }
 
             [Required]
             [Display(Name = "Telephone")]
-            public int UserTelephone { get; set; }
+            public int Telephone { get; set; }
         }
 
         private async Task LoadAsync(MyLandUser user)
@@ -60,10 +60,10 @@ namespace MyLand.Areas.Identity.Pages.Account.Manage
 
             Input = new InputModel
             {
-                UserFirstName = user.UserFirstName,
-                UserLastName = user.UserLastName,
-                UserAddress = user.UserAddress,
-                UserTelephone = user.UserTelephone,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Address = user.Address,
+                Telephone = user.Telephone,
             };
         }
 
@@ -93,10 +93,10 @@ namespace MyLand.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
-            if (Input.UserFirstName != user.UserFirstName) { user.UserFirstName = Input.UserFirstName; }
-            if (Input.UserLastName != user.UserLastName) { user.UserLastName = Input.UserLastName; }
-            if (Input.UserAddress != user.UserAddress) { user.UserAddress = Input.UserAddress; }
-            if (Input.UserTelephone != user.UserTelephone) { user.UserTelephone = Input.UserTelephone; }
+            if (Input.FirstName != user.FirstName) { user.FirstName = Input.FirstName; }
+            if (Input.LastName != user.LastName) { user.LastName = Input.LastName; }
+            if (Input.Address != user.Address) { user.Address = Input.Address; }
+            if (Input.Telephone != user.Telephone) { user.Telephone = Input.Telephone; }
 
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";

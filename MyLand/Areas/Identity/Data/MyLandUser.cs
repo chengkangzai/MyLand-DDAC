@@ -10,14 +10,16 @@ namespace MyLand.Areas.Identity.Data
     public class MyLandUser : IdentityUser
     {
         [PersonalData]
-        public string UserFirstName { get; set; }
+        public string FirstName { get; set; }
         [PersonalData]
-        public string UserLastName { get; set; }
+        public string LastName { get; set; }
         [PersonalData]
-        public string UserAddress { get; set; }
+        public string Address { get; set; }
         [PersonalData]
-        public int UserTelephone { get; set; }
+        public int Telephone { get; set; }
         [PersonalData]
-        public int UserRole { get; set; }
+        public int Role { get; set; }
+        [PersonalData]
+        public virtual ICollection<MyLand.Models.Property> Properties { get; set; }
     }
 }

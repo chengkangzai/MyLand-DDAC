@@ -48,21 +48,21 @@ namespace MyLand.Areas.Identity.Pages.Account
             [Required]
             [StringLength(100, ErrorMessage = "First name cannot be empty", MinimumLength = 1)]
             [Display(Name = "First Name")]
-            public string UserFirstName { get; set; }
+            public string FirstName { get; set; }
 
             [Required]
             [StringLength(100, ErrorMessage = "Last name cannot be empty", MinimumLength = 1)]
             [Display(Name = "Last Name")]
-            public string UserLastName { get; set; }
+            public string LastName { get; set; }
 
             [Required]
             [StringLength(100, ErrorMessage = "Address cannot be empty", MinimumLength = 1)]
             [Display(Name = "Address")]
-            public string UserAddress { get; set; }
+            public string Address { get; set; }
 
             [Required]
             [Display(Name = "Telephone")]
-            public int UserTelephone { get; set; }
+            public int Telephone { get; set; }
 
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
@@ -93,18 +93,16 @@ namespace MyLand.Areas.Identity.Pages.Account
 
             var userRole = 0;
             if (Input.Email == "admin@myland.com")
-            {
-                userRole = 1;
-            }
+            { userRole = 1; }
             var user = new MyLandUser
             {
                 UserName = Input.Email,
                 Email = Input.Email,
-                UserFirstName = Input.UserFirstName,
-                UserLastName = Input.UserLastName,
-                UserAddress = Input.UserAddress,
-                UserTelephone = Input.UserTelephone,
-                UserRole = userRole
+                FirstName = Input.FirstName,
+                LastName = Input.LastName,
+                Address = Input.Address,
+                Telephone = Input.Telephone,
+                Role = userRole
             };
             var result = await _userManager.CreateAsync(user, Input.Password);
             if (result.Succeeded)

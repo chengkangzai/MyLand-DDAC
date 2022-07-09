@@ -10,9 +10,9 @@
         var user = await UserManager.GetUserAsync(User);
         if (user != null)
         {
-            if (user.UserRole == 0)
+            if (user.Role == 0)
             { role = "user"; }
-            if (user.UserRole == 1)
+            if (user.Role == 1)
             { role = "admin"; }   
         }
     }
@@ -22,7 +22,7 @@
 @if (role == "user")
 {
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="" asp-controller="Listings" asp-action="Manage">My Listings</a>
+        <a class="nav-link text-dark" asp-area="" asp-controller="Properties" asp-action="Manage">My Properties</a>
     </li>
     <li class="nav-item">
         <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
@@ -36,7 +36,7 @@
 @if (role == "admin")
 {
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="" asp-controller="Listings" asp-action="Moderate">Moderate Listings</a>
+        <a class="nav-link text-dark" asp-area="" asp-controller="Properties" asp-action="Moderate">Moderate Properties</a>
     </li>
     <li class="nav-item">
         <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Moderate Users</a>

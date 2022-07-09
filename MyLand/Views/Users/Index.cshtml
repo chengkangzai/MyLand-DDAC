@@ -19,13 +19,13 @@
                 @Html.DisplayNameFor(model => model.Email)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.UserFirstName)
+                @Html.DisplayNameFor(model => model.FirstName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.UserLastName)
+                @Html.DisplayNameFor(model => model.LastName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.UserRole)
+                @Html.DisplayNameFor(model => model.Role)
             </th>
             <th></th>
         </tr>
@@ -37,13 +37,13 @@
                 @Html.DisplayFor(modelItem => item.UserName)
             </td>
             <td>
-                @Html.DisplayNameFor(modelItem => item.UserFirstName)
+                @Html.DisplayNameFor(modelItem => item.FirstName)
             </td>
             <td>
-                @Html.DisplayNameFor(modelItem => item.UserLastName)
+                @Html.DisplayNameFor(modelItem => item.LastName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UserAddress)
+                @Html.DisplayFor(modelItem => item.Address)
             </td>
             <td>
                 <form asp-action="MakeAdmin" asp-route-username="@item.UserName">

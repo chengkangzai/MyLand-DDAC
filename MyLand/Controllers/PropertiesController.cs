@@ -13,12 +13,12 @@ using MyLand.Areas.Identity.Data;
 
 namespace MyLand.Controllers
 {
-    public class ListingsController : Controller
+    public class PropertiesController : Controller
     {
         private readonly MyLandContext _context;
         private readonly UserManager<MyLandUser> _userManager;
         private readonly SignInManager<MyLandUser> _signInManager;
-        public ListingsController(MyLandContext context, 
+        public PropertiesController(MyLandContext context, 
             UserManager<MyLandUser> userManager, 
             SignInManager<MyLandUser> signInManager)
         {
@@ -27,27 +27,27 @@ namespace MyLand.Controllers
             _signInManager = signInManager;
         }
 
-        // GET: Listings
+        // GET: Properties
         public async Task<IActionResult> Index()
         {
-            var listing = await _context.Listing.ToListAsync();
-            List<MyLand.Models.Listing> filteredList = new List<MyLand.Models.Listing>();
-            foreach (var item in listing){
-                if(item.UserName != null){
-                    //TODO Change name to S3 image link
-                    item.ListingPhoto = "~/imgs/"+item.ListingPhoto;
+            var properties = await _context.Property.ToListAsync();
+            List<MyLand.Models.Property> filteredList = new List<MyLand.Models.Property>();
+            foreach (var item in properties)
+            {
+                item.User = await _userManager.FindByIdAsync(item.UserId);
+                if (item.User == null) { item.UserId = "Not Found"; }
+                else { item.UserId = item.User.FirstName + ' ' + item.User.LastName; }
 
-                    var user = await _userManager.FindByNameAsync(item.UserName);
-                    if (user == null) { item.UserName = "Not Found"; }
-                    else { item.UserName = user.UserFirstName + ' ' + user.UserLastName; }
-                } else { item.UserName = "Not Found"; }
-                if (item.ListingActive == 1)
+                //TODO Change name to S3 image link
+                item.Photo = "~/imgs/"+item.Photo;
+                    
+                if (item.Active == 1)
                 { filteredList.Add(item); }
             }
-            return View(filteredList);
+            return View(properties);
         }
 
-        // GET: Moderate Listings
+        // GET: Moderate Properties
         public async Task<IActionResult> Manage()
         {
             if (_signInManager.IsSignedIn(User))
@@ -55,11 +55,11 @@ namespace MyLand.Controllers
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null)
                 { return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'."); }
-                var listing = await _context.Listing.ToListAsync();
-                List<MyLand.Models.Listing> filteredList = new List<MyLand.Models.Listing>();
-                foreach (var item in listing)
+                var properties = await _context.Property.ToListAsync();
+                List<MyLand.Models.Property> filteredList = new List<MyLand.Models.Property>();
+                foreach (var item in properties)
                 {
-                    if (item.UserName == user.UserName)
+                    if (item.UserId == user.Id)
                     { filteredList.Add(item); }
                 }
                 return View(filteredList);
@@ -67,7 +67,7 @@ namespace MyLand.Controllers
             return NotFound($"User login required");
         }
 
-        // GET: Moderate Listings
+        // GET: Moderate Properties
         public async Task<IActionResult> Moderate()
         {
             if (_signInManager.IsSignedIn(User))
@@ -75,72 +75,72 @@ namespace MyLand.Controllers
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null)
                 { return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'."); }
-                if (user.UserRole == 1)
+                if (user.Role == 1)
                 {
-                    var listing = await _context.Listing.ToListAsync();
-                    foreach (var item in listing)
+                    var properties = await _context.Property.ToListAsync();
+                    foreach (var item in properties)
                     {
-                        if (item.UserName != null)
-                        {
-                            var listingUser = await _userManager.FindByNameAsync(item.UserName);
-                            if (listingUser == null) { item.UserName = "Not Found"; }
-                            else { item.UserName = listingUser.UserFirstName + ' ' + listingUser.UserLastName; }
-                        }
-                        else { item.UserName = "Not Found"; }
+                        item.User = await _userManager.FindByIdAsync(item.UserId);
+                        if (item.User == null) { item.UserId = "Not Found"; }
+                        else { item.UserId = item.User.FirstName + ' ' + item.User.LastName; }
                     }
-                    return View(listing);
+                    return View(properties);
                 }
                 return NotFound();
             }
             return NotFound($"User login required");
         }
 
-        // GET: Listings/Details/5
+        // GET: Properties/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) { return NotFound(); }
-            var listing = await _context.Listing
-                .FirstOrDefaultAsync(m => m.ListingId == id);
-            if (listing == null) { return NotFound(); }
+            var property = await _context.Property
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (property == null) { return NotFound(); }
+
+            property.User = await _userManager.FindByIdAsync(property.UserId);
+            if (property.User == null) { property.UserId = "Not Found"; }
+            else { property.UserId = property.User.FirstName + ' ' + property.User.LastName; }
 
             //TODO Change name to S3 image link
-            listing.ListingPhoto = "~/imgs/" + listing.ListingPhoto;
+            property.Photo = "~/imgs/" + property.Photo;
 
-            return View(listing);
+            return View(property);
         }
 
-        // GET: Listings/Create
+        // GET: Properties/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Listings/Create
+        // POST: Properties/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ListingId,ListingType,ListingTitle,ListingDescription,ListingPrice,ListingSize,ListingPhoto,ListingDate")] Models.Listing listing)
+        public async Task<IActionResult> CreateConfirmation([Bind("Id,Type,Title,Description,Price,Size,Photo,Date")] Models.Property property)
         {
             if (_signInManager.IsSignedIn(User))
             {
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null)
                 { return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'."); }
-                listing.UserName = user.UserName;
-                listing.ListingActive = 1;
+                property.UserId = user.Id;
+                property.Active = 1;
                 if (ModelState.IsValid)
                 {
-                    _context.Add(listing);
+                    _context.Add(property);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
-                return View(listing);
+                return View(property);
             }
             return NotFound($"User login required");
         }
 
-        // GET: Listings/Edit/5
+        // GET: Properties/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (_signInManager.IsSignedIn(User))
@@ -149,21 +149,20 @@ namespace MyLand.Controllers
                 if (user == null)
                 { return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'."); }
                 if (id == null) { return NotFound(); }
-                var targetListing = await _context.Listing.FindAsync(id);
-                if (targetListing == null) { return NotFound(); }
-                if (targetListing.UserName == user.UserName | user.UserRole == 1) { return View(targetListing); } 
-                else { return NotFound($"Only listing owner may edit"); }
+                var property = await _context.Property.FindAsync(id);
+                if (property == null) { return NotFound(); }
+                if (property.UserId == user.Id | user.Role == 1) { return View(property); } 
+                else { return NotFound($"Only property owner may edit"); }
             }
             return NotFound($"User login required");
-            
         }
 
-        // POST: Listings/Edit/5
+        // POST: Properties/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("ListingId,ListingType,ListingTitle,ListingDescription,ListingPrice,ListingSize,ListingPhoto,ListingDate")] Models.Listing listing)
+        public async Task<IActionResult> EditConfirmation(int? id, [Bind("Id,Type,Title,Description,Price,Size,Photo,Date")] Models.Property property)
         {
             if (_signInManager.IsSignedIn(User))
             {
@@ -171,34 +170,33 @@ namespace MyLand.Controllers
                 if (user == null)
                 { return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'."); }
                 if (id == null) { return NotFound(); }
-                var targetListing = await _context.Listing.AsNoTracking().FirstOrDefaultAsync(item => item.ListingId == id);
-                if (targetListing == null) { return NotFound(); }
-                if (targetListing.UserName == user.UserName | user.UserRole == 1) {
+                var target = await _context.Property.AsNoTracking().FirstOrDefaultAsync(item => item.Id == id);
+                if (target == null) { return NotFound(); }
+                if (target.UserId == user.Id | user.Role == 1) {
                     if (ModelState.IsValid) {
-                        //readd some variable
-                        listing.UserName = targetListing.UserName;
-                        listing.ListingActive = targetListing.ListingActive;
+                        property.User.UserName = target.User.UserName;
+                        property.Active = 1;
                         try {
-                            _context.Update(listing);
+                            _context.Update(property);
                             await _context.SaveChangesAsync();
                         }
                         catch (DbUpdateConcurrencyException) {
-                            if (!ListingExists(listing.ListingId)) { return NotFound(); }
+                            if (!PropertyExists(property.Id)) { return NotFound(); }
                             else { return NotFound($"An error has occured"); }
                         }
                         return RedirectToAction(nameof(Manage));
                     }
-                    return View(listing);
+                    return View(property);
                 }
                 else
                 {
-                    return NotFound($"Only listing owner may edit");
+                    return NotFound($"Only property owner may edit");
                 }
             }
             return NotFound($"User login required");
         }
 
-        // GET: Listings/Delete/5
+        // GET: Properties/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (_signInManager.IsSignedIn(User))
@@ -207,17 +205,25 @@ namespace MyLand.Controllers
                 if (user == null)
                 { return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'."); }
                 if (id == null) { return NotFound(); }
-                var targetListing = await _context.Listing.FindAsync(id);
-                if (targetListing == null) { return NotFound(); }
-                if (user.UserRole == 1)
-                { return View(targetListing); }
+                if (user.Role == 1)
+                {
+                    var property = await _context.Property.FindAsync(id);
+                    if (property == null) { return NotFound(); }
+
+                    property.User = await _userManager.FindByIdAsync(property.UserId);
+                    if (property.User == null) { property.UserId = "Not Found"; }
+                    else { property.UserId = property.User.FirstName + ' ' + property.User.LastName; }
+
+
+                    return View(property); 
+                }
                 else
                 { return NotFound($"Only admin may delete"); }
             }
             return NotFound($"User login required");
         }
 
-        // POST: Listings/Delete/5
+        // POST: Properties/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
@@ -228,11 +234,11 @@ namespace MyLand.Controllers
                 if (user == null)
                 { return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'."); }
                 if (id == null) { return NotFound(); }
-                var targetListing = await _context.Listing.FindAsync(id);
-                if (targetListing == null) { return NotFound(); }
-                if ( user.UserRole == 1)
+                if ( user.Role == 1)
                 {
-                    _context.Listing.Remove(targetListing);
+                    var target = await _context.Property.FindAsync(id);
+                    if (target == null) { return NotFound(); }
+                    _context.Property.Remove(target);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Moderate));
                 }
@@ -242,7 +248,7 @@ namespace MyLand.Controllers
             return NotFound($"User login required");
         }
 
-        // POST: Listings/Inactivate/5
+        // POST: Properties/Inactivate/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Deactivate(int? id)
@@ -251,52 +257,48 @@ namespace MyLand.Controllers
             {
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null)
-                {
-                    return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-                }
+                { return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'."); }
                 if (id == null) { return NotFound(); }
-                var targetListing = await _context.Listing.FindAsync(id);
-                if (targetListing == null) { return NotFound(); }
-                if (user.UserRole == 1)
+                var property = await _context.Property.FindAsync(id);
+                if (property == null) { return NotFound(); }
+                if (user.Role == 1 | user.Id == property.UserId)
                 {
-                    targetListing.ListingActive = 0;
+                    property.Active = 0;
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Manage));
                 }
                 else
-                {
-                    return NotFound($"Only admin may delete");
-                }
+                { return NotFound($"Only owner and admin may deactivate"); }
             }
             return NotFound($"User login required");
         }
 
-        // POST: Listings/Notify/5
+        // POST: Properties/Notify/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Notify(int? id)
         {
             if (_signInManager.IsSignedIn(User))
             {
-                var targetListing = await _context.Listing.FindAsync(id);
-                if (targetListing == null) { return NotFound(); }
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null)
                 { return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'."); }
-                var listingUser = await _userManager.FindByNameAsync(targetListing.UserName);
-                if (user == null)
-                { return NotFound($"Listing poster not found"); }
+
+                var target = await _context.Property.FindAsync(id);
+                if (target == null) { return NotFound(); }
+                target.User = await _userManager.FindByIdAsync(target.UserId);
+                if (target.User == null) { return NotFound($"Properties poster not found"); }
                 //TODO SNS
-                //user.UserEmail
-                //listingUser.UserEmail
+                //target.User.UserEmail
+                //owner.UserEmail
                 return NotFound($"This function will send email");
             }
             return NotFound($"User login required");
         }
 
-        private bool ListingExists(int id)
+        private bool PropertyExists(int id)
         {
-            return _context.Listing.Any(e => e.ListingId == id);
+            return _context.Property.Any(e => e.Id == id);
         }
     }
 }
