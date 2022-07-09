@@ -18,14 +18,10 @@ namespace MyLand.Controllers
     public class UsersController : Controller
     {
         private readonly UserManager<MyLandUser> _userManager;
-        private readonly SignInManager<MyLandUser> _signInManager;
 
-        public UsersController(
-            UserManager<MyLandUser> userManager,
-            SignInManager<MyLandUser> signInManager)
+        public UsersController(UserManager<MyLandUser> userManager)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
         }
 
         // GET: Users
@@ -34,7 +30,7 @@ namespace MyLand.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user.Role != 1)
             {
-                return NotFound($"Only admin may delete");
+                return Unauthorized();
             }
             var users = await _userManager.Users.ToListAsync();
             foreach (var item in users)
@@ -48,12 +44,7 @@ namespace MyLand.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(string username)
         {
-            if (!_signInManager.IsSignedIn(User))
-            {
-                return NotFound($"User login required");
-            }
             var user = await _userManager.GetUserAsync(User);
-
             if (user.Role != 1)
             {
                 return Unauthorized();
@@ -75,15 +66,7 @@ namespace MyLand.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> MakeUser(string username)
         {
-            if (!_signInManager.IsSignedIn(User))
-            {
-                return NotFound($"User login required");
-            }
             var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
             if (user.Role != 1)
             {
                 return NotFound($"Only admin may change role");
@@ -106,15 +89,7 @@ namespace MyLand.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> MakeAdmin(string username)
         {
-            if (!_signInManager.IsSignedIn(User))
-            {
-                return NotFound($"User login required");
-            }
             var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
             if (user.Role != 1)
             {
                 return NotFound($"Only admin may change role");
