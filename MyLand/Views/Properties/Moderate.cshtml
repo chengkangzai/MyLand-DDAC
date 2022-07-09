@@ -57,20 +57,24 @@
                 @Html.DisplayFor(modelItem => item.Size)
             </td>
             <td>
-                @{ string parsedDate = item.Date.ToString("dd/mm/yy"); }
-                @Html.DisplayFor(modelItem => parsedDate)
+                @(item.Date.ToString("HH:mm dd/mm/yy"))
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UserId)
+                @(item.User?.FirstName ?? " ")  @(item.User?.LastName ?? " ")
             </td>
             <th>
-                @if(item.IsActive == 1) { @Html.Raw("Active") }
-                else{ @Html.Raw("Inactive") }
+                @Html.DisplayFor(modelItem => item.IsActive)
             </th>
             <td colspan="2">
-                <form asp-action="Details" asp-route-id="@item.Id">
-                    <input type="submit" value="Details" class="btn btn-primary" />
-                </form>
+                @Html.ActionLink("Details", "Details", "Properties",
+                    new
+                    {
+                        area = "",
+                        id = item.Id
+                    }, new
+                    {
+                        @class = "btn btn-primary"
+                    })
                 <form asp-action="Delete" asp-route-id="@item.Id">
                     <input type="submit" value="Delete" class="btn btn-danger" />
                 </form>

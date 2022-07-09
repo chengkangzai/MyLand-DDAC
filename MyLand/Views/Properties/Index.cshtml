@@ -31,7 +31,7 @@
                 @Html.DisplayNameFor(model => model.Date)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.User.UserName)
+                @Html.DisplayNameFor(model => model.User)
             </th>
             <th></th>
         </tr>
@@ -58,16 +58,21 @@
             @Html.DisplayFor(modelItem => item.Size)
         </td>
         <td>
-            @{ string parsedDate = item.Date.ToString("dd/mm/yy"); }
-            @Html.DisplayFor(modelItem => parsedDate))
+            @(item.Date.ToString("dd/mm/yy"))
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.UserId)
+            @(item.User?.FirstName ?? " ") @(item.User?.LastName ?? " ")
         </td>
         <td>
-        <form asp-action="Details" asp-route-id="@item.Id">
-            <input type="submit" value="Details" class="btn btn-primary" />
-        </form>
+            @Html.ActionLink("Details", "Details", "Properties",
+                new
+                {
+                    area = "",
+                    id = item.Id
+                }, new
+                {
+                    @class = "btn btn-primary"
+                })
         </td>
     </tr>  
     }

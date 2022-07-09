@@ -7,41 +7,44 @@
 
 <h1>Index</h1>
 
-<p>
-    <form asp-action="Create">
-        <input type="submit" value="Create" class="btn btn-danger" />
-    </form>
-</p>
+@Html.ActionLink("Create", "Create", "Properties", new
+{
+    area = ""
+}, new
+{
+    @class = "btn btn-primary"
+})
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Type)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Size)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Date)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsActive)
-            </th>
-            <th></th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Type)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Price)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Size)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsActive)
+        </th>
+        <th></th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model) {
+    @foreach (var item in Model)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Type)
@@ -59,25 +62,36 @@
                 @Html.DisplayFor(modelItem => item.Size)
             </td>
             <td>
-                @{ string parsedDate = item.Date.ToString("dd/mm/yy"); }
-                @Html.DisplayFor(modelItem => parsedDate)
+                @(item.Date.ToString("HH:mm dd/mm/yy"))
             </td>
             <th>
-                @if(item.IsActive == 1) { @Html.Raw("Active") }
-                else{ @Html.Raw("Inactive") }
+
             </th>
             <td colspan="2">
-                <form asp-action="Edit" asp-route-id="@item.Id">
-                    <input type="submit" value="Edit" class="btn btn-danger" />
-                </form>
-                <form asp-action="Details" asp-route-id="@item.Id">
-                    <input type="submit" value="Details" class="btn btn-danger" />
-                </form>
+                @Html.ActionLink("Edit", "Edit", "Properties",
+                    new
+                    {
+                        area = "",
+                        id = item.Id
+                    }, new
+                    {
+                        @class = "btn btn-primary"
+                    })
+
+                @Html.ActionLink("Details", "Details", "Properties",
+                    new
+                    {
+                        area = "",
+                        id = item.Id
+                    }, new
+                    {
+                        @class = "btn btn-primary"
+                    })
                 <form asp-action="Deactivate" asp-route-id="@item.Id">
-                    <input type="submit" value="Deactivate" class="btn btn-danger" />
+                    <input type="submit" value="Deactivate" class="btn btn-danger"/>
                 </form>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>
