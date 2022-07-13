@@ -106,9 +106,7 @@ namespace MyLand.Controllers
             property.IsActive = true;
             property.Date = DateTime.Now;
 
-            //get the file from the form
-            var formCollection = Request.Form;
-            var images = formCollection.Files;
+            var images = Request.Form.Files;
 
             foreach (var image in images)
             {
