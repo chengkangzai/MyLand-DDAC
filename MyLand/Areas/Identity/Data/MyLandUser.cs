@@ -10,6 +10,8 @@ namespace MyLand.Areas.Identity.Data
     // Add profile data for application users by adding properties to the MyLandUser class
     public class MyLandUser : IdentityUser
     {
+        public const int ROLE_USER = 0;
+        public const int ROLE_ADMIN = 1;
         [PersonalData]
         public string FirstName { get; set; }
         [PersonalData]
