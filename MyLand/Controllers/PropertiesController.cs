@@ -10,6 +10,7 @@ using MyLand.Data;
 using MyLand.Models;
 using Microsoft.AspNetCore.Identity;
 using MyLand.Areas.Identity.Data;
+using MyLand.Services;
 
 
 namespace MyLand.Controllers
@@ -47,6 +48,7 @@ namespace MyLand.Controllers
         public async Task<IActionResult> Manage()
         {
             var user = await _userManager.GetUserAsync(User);
+            //TODO check the user role
             var properties = await _context.Property
                 .Where(p => p.User.Id == user.Id)
                 .ToListAsync();
@@ -100,12 +102,21 @@ namespace MyLand.Controllers
         // POST: Properties/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Store([Bind("Id,Type,Title,Description,Price,Size,Photo,Date")] Property property)
+        public async Task<IActionResult> Store([Bind("Id,Type,Title,Description,Price,Size,Date")] Property property)
         {
             var user = await _userManager.GetUserAsync(User);
             property.User = user;
             property.IsActive = true;
             property.Date = DateTime.Now;
+
+            //get the file from the form
+            var formCollection = Request.Form;
+            var images = formCollection.Files;
+
+            foreach (var image in images)
+            {
+                await S3Service.UploadImages(image.FileName, image.OpenReadStream());
+            }
 
             if (!ModelState.IsValid)
             {
@@ -113,7 +124,7 @@ namespace MyLand.Controllers
             }
             _context.Add(property);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(user.Role == MyLandUser.ROLE_USER ? nameof(Manage) : nameof(Index));
         }
 
         // GET: Properties/Edit/5
