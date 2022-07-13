@@ -196,25 +196,29 @@ namespace MyLand.Controllers
             return RedirectToAction(nameof(Manage));
         }
 
-        // GET: Properties/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // POST: Properties/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Destroy(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
             var user = await _userManager.GetUserAsync(User);
             if (user.Role != 1)
             {
                 return Unauthorized();
+            }
+            if (id == null)
+            {
+                return NotFound();
             }
             var property = await _context.Property.FindAsync(id);
             if (property == null)
             {
                 return NotFound();
             }
-
-            return View(property);
+            await S3Service.DeleteImage(property.Photo);
+            _context.Property.Remove(property);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Moderate));
         }
 
         // POST: Properties/Deactivate/5
