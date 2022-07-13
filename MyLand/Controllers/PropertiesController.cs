@@ -30,6 +30,11 @@ namespace MyLand.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+            var user = await _userManager.GetUserAsync(User);
+            if (user.Role == MyLandUser.ROLE_USER)
+            {
+                return Unauthorized();
+            }
             var properties = await _context.Property
                 .Include(property => property.User)
                 .Where(property => property.IsActive)
@@ -53,9 +58,9 @@ namespace MyLand.Controllers
         public async Task<IActionResult> Moderate()
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user.Role != 1)
+            if (user.Role != MyLandUser.ROLE_ADMIN)
             {
-                return NotFound();
+                return Unauthorized();
             }
             var properties = await _context.Property
                 .Include(m => m.User)
