@@ -1,4 +1,6 @@
-﻿@model MyLand.Models.Property
+﻿@using MyLand.Services
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model MyLand.Models.Property
 
 @{
     ViewData["Title"] = "Details";
@@ -57,6 +59,11 @@
             <input type="submit" value="Notify" class="btn btn-primary" />
         </form>
     </dl>
+    
+    <h4>Images</h4>
+    <hr />
+    @{var imageUrl = AWSHelper.getBucketUrl() + "images/" + Model.Photo;}
+    <img style="max-width: 40vw " src="@imageUrl"/>
 </div>
 <div>
     <a asp-action="Index">Back to List</a>

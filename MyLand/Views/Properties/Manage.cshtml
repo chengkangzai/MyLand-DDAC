@@ -1,4 +1,6 @@
-﻿@model IEnumerable<MyLand.Models.Property>
+﻿@using MyLand.Services
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable<MyLand.Models.Property>
 
 @{
     ViewData["Title"] = "Manage";
@@ -17,6 +19,9 @@
 <table class="table">
     <thead>
     <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Photo)
+        </th>
         <th>
             @Html.DisplayNameFor(model => model.Type)
         </th>
@@ -45,7 +50,10 @@
     <tbody>
     @foreach (var item in Model)
     {
+        var imageUrl = AWSHelper.getBucketUrl() + "images/" + item.Photo;
         <tr>
+            <td>
+            <img style="width:100px; height:100px;" src="@imageUrl"/>
             <td>
                 @Html.DisplayFor(modelItem => item.Type)
             </td>
