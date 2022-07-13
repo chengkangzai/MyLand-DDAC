@@ -211,31 +211,7 @@ namespace MyLand.Controllers
             return View(property);
         }
 
-        // POST: Properties/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            var user = await _userManager.GetUserAsync(User);
-            if (user.Role != 1)
-            {
-                return Unauthorized();
-            }
-            var target = await _context.Property.FindAsync(id);
-            if (target == null)
-            {
-                return NotFound();
-            }
-            _context.Property.Remove(target);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Moderate));
-        }
-
-        // POST: Properties/Inactivate/5
+        // POST: Properties/Deactivate/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Deactivate(int? id)
@@ -255,6 +231,30 @@ namespace MyLand.Controllers
                 return Unauthorized();
             }
             property.IsActive = false;
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Manage));
+        }
+        
+        // POST: Properties/Activate/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Activate(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var user = await _userManager.GetUserAsync(User);
+            var property = await _context.Property.FindAsync(id);
+            if (property == null)
+            {
+                return NotFound();
+            }
+            if (!(user.Role == 1 || user == property.User))
+            {
+                return Unauthorized();
+            }
+            property.IsActive = true;
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Manage));
         }
