@@ -87,9 +87,6 @@ namespace MyLand.Controllers
                 return NotFound();
             }
 
-            //TODO Change name to S3 image link
-            property.Photo = "~/imgs/" + property.Photo;
-
             return View(property);
         }
 
@@ -117,6 +114,7 @@ namespace MyLand.Controllers
             {
                 await S3Service.UploadImages(image.FileName, image.OpenReadStream());
             }
+            property.Photo = images.First().FileName;
 
             if (!ModelState.IsValid)
             {
