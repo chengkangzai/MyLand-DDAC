@@ -169,6 +169,14 @@ namespace MyLand.Controllers
                 ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
                 return View("Edit", property);
             }
+            var images = Request.Form.Files;
+            if (images.Count > 0)
+            {
+                var image = images.First();
+                await S3Service.UploadImages(image.FileName, image.OpenReadStream());
+                await S3Service.DeleteImage(property.Photo);
+                property.Photo = image.FileName;
+            }
 
             property.User.UserName = target.User.UserName;
             property.IsActive = true;

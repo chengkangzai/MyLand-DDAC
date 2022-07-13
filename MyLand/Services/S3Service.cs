@@ -24,5 +24,16 @@ namespace MyLand.Services
             };
             return await s3Client.PutObjectAsync(request);
         }
+
+        public async static Task<DeleteObjectResponse> DeleteImage(string fileName)
+        {
+            var s3Client = AWSHelper.getAmazonS3Client();
+            var request = new DeleteObjectRequest
+            {
+                BucketName = AWSHelper.getBucketName() + "/images",
+                Key = fileName
+            };
+            return await s3Client.DeleteObjectAsync(request);
+        }
     }
 }
