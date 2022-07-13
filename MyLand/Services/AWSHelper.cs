@@ -14,7 +14,7 @@ namespace MyLand.Services
 
         public static string getBucketUrl()
         {
-            return "https://s3.amazonaws.com/myland-images/";
+            return "https://myland-images.s3.us-east-1.amazonaws.com/";
         }
 
         public static AmazonS3Client getAmazonS3Client()
