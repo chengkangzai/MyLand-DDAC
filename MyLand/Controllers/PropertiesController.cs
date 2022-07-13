@@ -160,7 +160,7 @@ namespace MyLand.Controllers
                 return NotFound();
             }
             var user = await _userManager.GetUserAsync(User);
-            if (!(target.User == user || user.Role == 1))
+            if (!(target.User == user || user.Role == MyLandUser.ROLE_ADMIN))
             {
                 return Unauthorized();
             }
@@ -202,7 +202,7 @@ namespace MyLand.Controllers
         public async Task<IActionResult> Destroy(int? id)
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user.Role != 1)
+            if (user.Role != MyLandUser.ROLE_ADMIN)
             {
                 return Unauthorized();
             }
@@ -236,7 +236,7 @@ namespace MyLand.Controllers
             {
                 return NotFound();
             }
-            if (!(user.Role == 1 || user == property.User))
+            if (!(user.Role == MyLandUser.ROLE_ADMIN || user == property.User))
             {
                 return Unauthorized();
             }
