@@ -10,6 +10,7 @@ using MyLand.Data;
 using MyLand.Models;
 using Microsoft.AspNetCore.Identity;
 using MyLand.Areas.Identity.Data;
+using MyLand.Services;
 
 
 namespace MyLand.Controllers
@@ -30,6 +31,11 @@ namespace MyLand.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+            var user = await _userManager.GetUserAsync(User);
+            if (user.Role == MyLandUser.ROLE_USER)
+            {
+                return Unauthorized();
+            }
             var properties = await _context.Property
                 .Include(property => property.User)
                 .Where(property => property.IsActive)
@@ -42,6 +48,7 @@ namespace MyLand.Controllers
         public async Task<IActionResult> Manage()
         {
             var user = await _userManager.GetUserAsync(User);
+            //TODO check the user role
             var properties = await _context.Property
                 .Where(p => p.User.Id == user.Id)
                 .ToListAsync();
@@ -53,9 +60,9 @@ namespace MyLand.Controllers
         public async Task<IActionResult> Moderate()
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user.Role != 1)
+            if (user.Role != MyLandUser.ROLE_ADMIN)
             {
-                return NotFound();
+                return Unauthorized();
             }
             var properties = await _context.Property
                 .Include(m => m.User)
@@ -80,9 +87,6 @@ namespace MyLand.Controllers
                 return NotFound();
             }
 
-            //TODO Change name to S3 image link
-            property.Photo = "~/imgs/" + property.Photo;
-
             return View(property);
         }
 
@@ -95,12 +99,20 @@ namespace MyLand.Controllers
         // POST: Properties/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Store([Bind("Id,Type,Title,Description,Price,Size,Photo,Date")] Property property)
+        public async Task<IActionResult> Store([Bind("Id,Type,Title,Description,Price,Size,Date")] Property property)
         {
             var user = await _userManager.GetUserAsync(User);
             property.User = user;
             property.IsActive = true;
             property.Date = DateTime.Now;
+
+            var images = Request.Form.Files;
+
+            foreach (var image in images)
+            {
+                await S3Service.UploadImages(image.FileName, image.OpenReadStream());
+            }
+            property.Photo = images.First().FileName;
 
             if (!ModelState.IsValid)
             {
@@ -108,7 +120,7 @@ namespace MyLand.Controllers
             }
             _context.Add(property);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(user.Role == MyLandUser.ROLE_USER ? nameof(Manage) : nameof(Index));
         }
 
         // GET: Properties/Edit/5
@@ -148,7 +160,7 @@ namespace MyLand.Controllers
                 return NotFound();
             }
             var user = await _userManager.GetUserAsync(User);
-            if (!(target.User == user || user.Role == 1))
+            if (!(target.User == user || user.Role == MyLandUser.ROLE_ADMIN))
             {
                 return Unauthorized();
             }
@@ -156,6 +168,14 @@ namespace MyLand.Controllers
             {
                 ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
                 return View("Edit", property);
+            }
+            var images = Request.Form.Files;
+            if (images.Count > 0)
+            {
+                var image = images.First();
+                await S3Service.UploadImages(image.FileName, image.OpenReadStream());
+                await S3Service.DeleteImage(property.Photo);
+                property.Photo = image.FileName;
             }
 
             property.User.UserName = target.User.UserName;
@@ -176,55 +196,59 @@ namespace MyLand.Controllers
             return RedirectToAction(nameof(Manage));
         }
 
-        // GET: Properties/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // POST: Properties/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Destroy(int? id)
         {
+            var user = await _userManager.GetUserAsync(User);
+            if (user.Role != MyLandUser.ROLE_ADMIN)
+            {
+                return Unauthorized();
+            }
             if (id == null)
             {
                 return NotFound();
-            }
-            var user = await _userManager.GetUserAsync(User);
-            if (user.Role != 1)
-            {
-                return Unauthorized();
             }
             var property = await _context.Property.FindAsync(id);
             if (property == null)
             {
                 return NotFound();
             }
-
-            return View(property);
+            await S3Service.DeleteImage(property.Photo);
+            _context.Property.Remove(property);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Moderate));
         }
 
-        // POST: Properties/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // POST: Properties/Deactivate/5
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int? id)
+        public async Task<IActionResult> Deactivate(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
             var user = await _userManager.GetUserAsync(User);
-            if (user.Role != 1)
-            {
-                return Unauthorized();
-            }
-            var target = await _context.Property.FindAsync(id);
-            if (target == null)
+            var property = await _context.Property.FindAsync(id);
+            if (property == null)
             {
                 return NotFound();
             }
-            _context.Property.Remove(target);
+            if (!(user.Role == MyLandUser.ROLE_ADMIN || user == property.User))
+            {
+                return Unauthorized();
+            }
+            property.IsActive = false;
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Moderate));
+            return RedirectToAction(nameof(Manage));
         }
-
-        // POST: Properties/Inactivate/5
+        
+        // POST: Properties/Activate/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Deactivate(int? id)
+        public async Task<IActionResult> Activate(int? id)
         {
             if (id == null)
             {
@@ -240,7 +264,7 @@ namespace MyLand.Controllers
             {
                 return Unauthorized();
             }
-            property.IsActive = false;
+            property.IsActive = true;
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Manage));
         }

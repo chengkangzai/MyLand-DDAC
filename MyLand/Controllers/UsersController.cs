@@ -28,14 +28,14 @@ namespace MyLand.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user.Role != 1)
+            if (user.Role != MyLandUser.ROLE_ADMIN)
             {
                 return Unauthorized();
             }
             var users = await _userManager.Users.ToListAsync();
             foreach (var item in users)
             {
-                user.Address = item.Role == 1 ? "Admin" : "User";
+                user.Address = item.Role == MyLandUser.ROLE_ADMIN ? "Admin" : "User";
             }
             return View(users);
         }
@@ -45,7 +45,7 @@ namespace MyLand.Controllers
         public async Task<IActionResult> Delete(string username)
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user.Role != 1)
+            if (user.Role != MyLandUser.ROLE_ADMIN)
             {
                 return Unauthorized();
             }
@@ -67,7 +67,7 @@ namespace MyLand.Controllers
         public async Task<IActionResult> MakeUser(string username)
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user.Role != 1)
+            if (user.Role != MyLandUser.ROLE_ADMIN)
             {
                 return NotFound($"Only admin may change role");
             }
@@ -80,7 +80,7 @@ namespace MyLand.Controllers
             {
                 return NotFound();
             }
-            targetUser.Role = 0;
+            targetUser.Role = MyLandUser.ROLE_USER;
             await _userManager.UpdateAsync(targetUser);
             return RedirectToAction(nameof(Index));
         }
@@ -90,11 +90,11 @@ namespace MyLand.Controllers
         public async Task<IActionResult> MakeAdmin(string username)
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user.Role != 1)
+            if (user.Role != MyLandUser.ROLE_ADMIN)
             {
                 return NotFound($"Only admin may change role");
             }
-            
+
             if (username == null)
             {
                 return NotFound();
@@ -104,7 +104,7 @@ namespace MyLand.Controllers
             {
                 return NotFound();
             }
-            targetUser.Role = 1;
+            targetUser.Role = MyLandUser.ROLE_ADMIN;
             await _userManager.UpdateAsync(targetUser);
             return RedirectToAction(nameof(Index));
         }

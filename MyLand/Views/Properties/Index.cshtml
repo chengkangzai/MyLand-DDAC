@@ -1,4 +1,5 @@
-﻿@model IEnumerable<MyLand.Models.Property>
+﻿@using MyLand.Services
+@model IEnumerable<MyLand.Models.Property>
 
 @{
     ViewData["Title"] = "Index";
@@ -37,10 +38,12 @@
         </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model) {
-    <tr>
+    @foreach (var item in Model)
+    {
+        var imageUrl = AWSHelper.getBucketUrl() + "images/" + item.Photo;
+        <tr>
         <td>
-            <img style="width:100px; height:100px;" src="/imgs/img.png"/>
+            <img style="width:100px; height:100px;" src="@imageUrl"/>
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Type)

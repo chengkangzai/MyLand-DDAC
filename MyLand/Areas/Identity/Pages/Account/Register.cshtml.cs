@@ -91,9 +91,11 @@ namespace MyLand.Areas.Identity.Pages.Account
                 return Page();
             }
 
-            var userRole = 0;
+            var userRole = MyLandUser.ROLE_USER;
             if (Input.Email == "admin@myland.com")
-            { userRole = 1; }
+            {
+                userRole = MyLandUser.ROLE_ADMIN;
+            }
             var user = new MyLandUser
             {
                 UserName = Input.Email,
