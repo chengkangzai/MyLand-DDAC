@@ -34,7 +34,7 @@ namespace MyLand.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user.Role == MyLandUser.ROLE_USER)
             {
-                return Unauthorized();
+                return RedirectToAction("Handle403", "AuthException");
             }
             var properties = await _context.Property
                 .Include(property => property.User)
@@ -62,7 +62,7 @@ namespace MyLand.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user.Role != MyLandUser.ROLE_ADMIN)
             {
-                return Unauthorized();
+                return RedirectToAction("Handle403", "AuthException");
             }
             var properties = await _context.Property
                 .Include(m => m.User)
@@ -77,14 +77,14 @@ namespace MyLand.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Handle404", "AuthException");
             }
             var property = await _context.Property
                 .Include(m => m.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (property == null)
             {
-                return NotFound();
+                return RedirectToAction("Handle404", "AuthException");
             }
 
             return View(property);
@@ -128,17 +128,17 @@ namespace MyLand.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Handle404", "AuthException");
             }
             var property = await _context.Property.FindAsync(id);
             if (property == null)
             {
-                return NotFound();
+                return RedirectToAction("Handle404", "AuthException");
             }
             var user = await _userManager.GetUserAsync(User);
             if (!(property.User == user || user.Role == 1))
             {
-                return Unauthorized();
+                return RedirectToAction("Handle403", "AuthException");
             }
 
             return View(property);
@@ -152,17 +152,17 @@ namespace MyLand.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Handle404", "AuthException");
             }
             var target = await _context.Property.AsNoTracking().FirstOrDefaultAsync(item => item.Id == id);
             if (target == null)
             {
-                return NotFound();
+                return RedirectToAction("Handle404", "AuthException");
             }
             var user = await _userManager.GetUserAsync(User);
             if (!(target.User == user || user.Role == MyLandUser.ROLE_ADMIN))
             {
-                return Unauthorized();
+                return RedirectToAction("Handle403", "AuthException");
             }
             if (!ModelState.IsValid)
             {
@@ -189,9 +189,9 @@ namespace MyLand.Controllers
             {
                 if (!PropertyExists(property.Id))
                 {
-                    return NotFound();
+                    return RedirectToAction("Handle404", "AuthException");
                 }
-                return NotFound($"An error has occured");
+                return RedirectToAction("Handle403", "AuthException");
             }
             return RedirectToAction(nameof(Manage));
         }
@@ -204,16 +204,16 @@ namespace MyLand.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user.Role != MyLandUser.ROLE_ADMIN)
             {
-                return Unauthorized();
+                return RedirectToAction("Handle403", "AuthException");
             }
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Handle404", "AuthException");
             }
             var property = await _context.Property.FindAsync(id);
             if (property == null)
             {
-                return NotFound();
+                return RedirectToAction("Handle404", "AuthException");
             }
             await S3Service.DeleteImage(property.Photo);
             _context.Property.Remove(property);
@@ -228,23 +228,23 @@ namespace MyLand.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Handle404", "AuthException");
             }
             var user = await _userManager.GetUserAsync(User);
             var property = await _context.Property.FindAsync(id);
             if (property == null)
             {
-                return NotFound();
+                return RedirectToAction("Handle404", "AuthException");
             }
             if (!(user.Role == MyLandUser.ROLE_ADMIN || user == property.User))
             {
-                return Unauthorized();
+                return RedirectToAction("Handle403", "AuthException");
             }
             property.IsActive = false;
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Manage));
         }
-        
+
         // POST: Properties/Activate/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -252,17 +252,17 @@ namespace MyLand.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Handle404", "AuthException");
             }
             var user = await _userManager.GetUserAsync(User);
             var property = await _context.Property.FindAsync(id);
             if (property == null)
             {
-                return NotFound();
+                return RedirectToAction("Handle404", "AuthException");
             }
             if (!(user.Role == 1 || user == property.User))
             {
-                return Unauthorized();
+                return RedirectToAction("Handle403", "AuthException");
             }
             property.IsActive = true;
             await _context.SaveChangesAsync();
@@ -278,7 +278,7 @@ namespace MyLand.Controllers
             var property = await _context.Property.FindAsync(id);
             if (property == null)
             {
-                return NotFound();
+                return RedirectToAction("Handle404", "AuthException");
             }
             //TODO SNS
             //target.User.UserEmail

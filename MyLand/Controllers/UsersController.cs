@@ -30,7 +30,7 @@ namespace MyLand.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user.Role != MyLandUser.ROLE_ADMIN)
             {
-                return Unauthorized();
+                return RedirectToAction("Handle403", "AuthException");
             }
             var users = await _userManager.Users.ToListAsync();
             foreach (var item in users)
@@ -47,16 +47,16 @@ namespace MyLand.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user.Role != MyLandUser.ROLE_ADMIN)
             {
-                return Unauthorized();
+                return RedirectToAction("Handle403", "AuthException");
             }
             if (username == null)
             {
-                return NotFound();
+                return RedirectToAction("Handle404", "AuthException");
             }
             var targetUser = await _userManager.FindByNameAsync(username);
             if (targetUser == null)
             {
-                return NotFound();
+                return RedirectToAction("Handle404", "AuthException");
             }
             await _userManager.DeleteAsync(targetUser);
             return RedirectToAction(nameof(Index));
@@ -69,16 +69,16 @@ namespace MyLand.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user.Role != MyLandUser.ROLE_ADMIN)
             {
-                return NotFound($"Only admin may change role");
+                return RedirectToAction("Handle403", "AuthException");
             }
             if (username == null)
             {
-                return NotFound();
+                return RedirectToAction("Handle404", "AuthException");
             }
             var targetUser = await _userManager.FindByNameAsync(username);
             if (targetUser == null)
             {
-                return NotFound();
+                return RedirectToAction("Handle404", "AuthException");
             }
             targetUser.Role = MyLandUser.ROLE_USER;
             await _userManager.UpdateAsync(targetUser);
@@ -92,17 +92,17 @@ namespace MyLand.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user.Role != MyLandUser.ROLE_ADMIN)
             {
-                return NotFound($"Only admin may change role");
+                return RedirectToAction("Handle403", "AuthException");
             }
 
             if (username == null)
             {
-                return NotFound();
+                return RedirectToAction("Handle404", "AuthException");
             }
             var targetUser = await _userManager.FindByNameAsync(username);
             if (targetUser == null)
             {
-                return NotFound();
+                return RedirectToAction("Handle404", "AuthException");
             }
             targetUser.Role = MyLandUser.ROLE_ADMIN;
             await _userManager.UpdateAsync(targetUser);

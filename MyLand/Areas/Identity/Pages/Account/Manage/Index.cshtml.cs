@@ -72,7 +72,7 @@ namespace MyLand.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return RedirectToAction("Handle403", "AuthException");
             }
 
             await LoadAsync(user);
@@ -84,7 +84,7 @@ namespace MyLand.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return RedirectToAction("Handle403", "AuthException");
             }
 
             if (!ModelState.IsValid)
