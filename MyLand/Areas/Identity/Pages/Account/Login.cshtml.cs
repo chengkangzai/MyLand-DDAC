@@ -18,13 +18,11 @@ namespace MyLand.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class LoginModel : PageModel
     {
-        private readonly UserManager<MyLandUser> _userManager;
+
         private readonly SignInManager<MyLandUser> _signInManager;
 
-        public LoginModel(SignInManager<MyLandUser> signInManager,
-            UserManager<MyLandUser> userManager)
+        public LoginModel(SignInManager<MyLandUser> signInManager)
         {
-            _userManager = userManager;
             _signInManager = signInManager;
         }
 
@@ -84,10 +82,6 @@ namespace MyLand.Areas.Identity.Pages.Account
             if (result.Succeeded)
             {
                 return LocalRedirect(returnUrl);
-            }
-            if (result.IsLockedOut)
-            {
-                return RedirectToPage("./Lockout");
             }
 
             // If we got this far, something failed, redisplay form

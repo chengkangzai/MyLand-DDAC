@@ -20,7 +20,7 @@ namespace MyLand.Areas.Identity
                     options.UseSqlServer(
                         context.Configuration.GetConnectionString("MyLandContextConnection")));
 
-                services.AddDefaultIdentity<MyLandUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                services.AddDefaultIdentity<MyLandUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<MyLandContext>();
             });
