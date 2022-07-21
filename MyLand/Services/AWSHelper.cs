@@ -17,6 +17,11 @@ namespace MyLand.Services
             return "https://myland-images.s3.us-east-1.amazonaws.com/";
         }
 
+        public static string getCloudFrontUrl()
+        {
+            return "https://d3ron5doy4wae.cloudfront.net/";
+        }
+
         public static AmazonS3Client getAmazonS3Client()
         {
             var builder = new ConfigurationBuilder()

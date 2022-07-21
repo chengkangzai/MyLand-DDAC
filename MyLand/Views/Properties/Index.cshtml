@@ -40,7 +40,7 @@
     <tbody>
     @foreach (var item in Model)
     {
-        var imageUrl = AWSHelper.getBucketUrl() + "images/" + item.Photo;
+        var imageUrl = AWSHelper.getCloudFrontUrl() + "images/" + item.Photo;
         <tr>
         <td>
             <img style="width:100px; height:100px;" src="@imageUrl"/>

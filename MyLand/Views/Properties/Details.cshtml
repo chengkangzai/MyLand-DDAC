@@ -68,7 +68,7 @@
     
     <h4>Images</h4>
     <hr />
-    @{var imageUrl = AWSHelper.getBucketUrl() + "images/" + Model.Photo;}
+    @{var imageUrl = AWSHelper.getCloudFrontUrl() + "images/" + Model.Photo;}
     <img style="max-width: 40vw " src="@imageUrl"/>
 </div>
 <div>
