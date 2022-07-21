@@ -7,7 +7,7 @@
     "application"    : "MyLand",
     "environment"    : "MyLand-prod",
     "enable-xray"    : true,
-    "enhanced-health-type" : "basic",
+    "enhanced-health-type" : "enhanced",
     "additional-options"   : "",
     "proxy-server"         : "nginx"
 }
