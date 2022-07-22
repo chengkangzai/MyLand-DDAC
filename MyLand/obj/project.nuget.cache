@@ -1,11 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "K+D5WCg13WTpFIeeftNn1Oyf1PykTd5pvEFhi/lrvxyzdkqE9wRFsFtDlM1ex8ZcCqlaqjAqPmh1bqRGPkxglg==",
+  "dgSpecHash": "jreixaoJXBVOGcDMUotxSw0lDOmPHaDO1A8CNUCacRGPenZaH08iirttS8+0Zd9x3YxQ7hZnb1IWBKkjull7jQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\CCK\\RiderProjects\\MyLand-DDAC\\MyLand\\MyLand.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\CCK\\.nuget\\packages\\awssdk.core\\3.7.12.7\\awssdk.core.3.7.12.7.nupkg.sha512",
+    "C:\\Users\\CCK\\.nuget\\packages\\awssdk.core\\3.7.12.11\\awssdk.core.3.7.12.11.nupkg.sha512",
+    "C:\\Users\\CCK\\.nuget\\packages\\awssdk.extensions.netcore.setup\\3.7.2\\awssdk.extensions.netcore.setup.3.7.2.nupkg.sha512",
     "C:\\Users\\CCK\\.nuget\\packages\\awssdk.s3\\3.7.9.23\\awssdk.s3.3.7.9.23.nupkg.sha512",
+    "C:\\Users\\CCK\\.nuget\\packages\\awssdk.simplenotificationservice\\3.7.3.83\\awssdk.simplenotificationservice.3.7.3.83.nupkg.sha512",
     "C:\\Users\\CCK\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\3.1.25\\microsoft.aspnetcore.cryptography.internal.3.1.25.nupkg.sha512",
     "C:\\Users\\CCK\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\3.1.25\\microsoft.aspnetcore.cryptography.keyderivation.3.1.25.nupkg.sha512",
     "C:\\Users\\CCK\\.nuget\\packages\\microsoft.aspnetcore.html.abstractions\\2.2.0\\microsoft.aspnetcore.html.abstractions.2.2.0.nupkg.sha512",
