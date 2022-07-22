@@ -6,7 +6,6 @@
 }
 
 <h1>@ViewData["Title"]</h1>
-
 <div class="row">
     <div class="col-md-4">
         <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
@@ -55,7 +54,9 @@
                     <option value="@MyLandUser.ROLE_CUSTOMER">Customer</option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">Register</button>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Register</button>
+            </div>
         </form>
     </div>
 </div>
