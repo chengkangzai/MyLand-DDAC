@@ -45,7 +45,7 @@ namespace MyLand.Controllers
 
         // GET: Moderate Properties
         [HttpGet]
-        public async Task<IActionResult> Manage()
+        public async Task<IActionResult> AgentIndex()
         {
             var user = await _userManager.GetUserAsync(User);
             //TODO check the user role
@@ -57,7 +57,7 @@ namespace MyLand.Controllers
 
         // GET: Moderate Properties
         [HttpGet]
-        public async Task<IActionResult> Moderate()
+        public async Task<IActionResult> ModerateIndex()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user.Role != MyLandUser.ROLE_MODERATOR)
@@ -120,7 +120,7 @@ namespace MyLand.Controllers
             }
             _context.Add(property);
             await _context.SaveChangesAsync();
-            return RedirectToAction(user.Role == MyLandUser.ROLE_CUSTOMER ? nameof(Manage) : nameof(Index));
+            return RedirectToAction(GetIndexNameByUser());
         }
 
         // GET: Properties/Edit/5
@@ -148,13 +148,15 @@ namespace MyLand.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(int? id,
-            [Bind("Id,Type,Title,Description,Price,Size,Photo,Date")] Property property)
+            [Bind("Id,Type,Title,Description,Price,Size,Photo,Date,IsActive")] Property property)
         {
             if (id == null)
             {
                 return RedirectToAction("NOTFOUND", "App");
             }
-            var target = await _context.Property.AsNoTracking().FirstOrDefaultAsync(item => item.Id == id);
+            var target = await _context.Property
+                .Include(m => m.User)
+                .FirstOrDefaultAsync(item => item.Id == id);
             if (target == null)
             {
                 return RedirectToAction("NOTFOUND", "App");
@@ -175,25 +177,11 @@ namespace MyLand.Controllers
                 var image = images.First();
                 await S3Service.UploadImages(image.FileName, image.OpenReadStream());
                 await S3Service.DeleteImage(property.Photo);
-                property.Photo = image.FileName;
+                target.Photo = image.FileName;
             }
-
-            property.User.UserName = target.User.UserName;
-            property.IsActive = true;
-            try
-            {
-                _context.Update(property);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PropertyExists(property.Id))
-                {
-                    return RedirectToAction("NOTFOUND", "App");
-                }
-                return RedirectToAction("NOTFOUND", "App");
-            }
-            return RedirectToAction(nameof(Manage));
+            _context.Update(target);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(GetIndexNameByUser());
         }
 
         // POST: Properties/Delete/5
@@ -218,55 +206,7 @@ namespace MyLand.Controllers
             await S3Service.DeleteImage(property.Photo);
             _context.Property.Remove(property);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Moderate));
-        }
-
-        // POST: Properties/Deactivate/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Deactivate(int? id)
-        {
-            if (id == null)
-            {
-                return RedirectToAction("NOTFOUND", "App");
-            }
-            var user = await _userManager.GetUserAsync(User);
-            var property = await _context.Property.FindAsync(id);
-            if (property == null)
-            {
-                return RedirectToAction("NOTFOUND", "App");
-            }
-            if (!(user.Role == MyLandUser.ROLE_MODERATOR || user == property.User))
-            {
-                return RedirectToAction("UNAUTHORIZED", "App");
-            }
-            property.IsActive = false;
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Manage));
-        }
-        
-        // POST: Properties/Activate/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Activate(int? id)
-        {
-            if (id == null)
-            {
-                return RedirectToAction("NOTFOUND", "App");
-            }
-            var user = await _userManager.GetUserAsync(User);
-            var property = await _context.Property.FindAsync(id);
-            if (property == null)
-            {
-                return RedirectToAction("NOTFOUND", "App");
-            }
-            if (!(user.Role == 1 || user == property.User))
-            {
-                return RedirectToAction("UNAUTHORIZED", "App");
-            }
-            property.IsActive = true;
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Manage));
+            return RedirectToAction(nameof(ModerateIndex));
         }
 
         // POST: Properties/Notify/5
@@ -284,6 +224,17 @@ namespace MyLand.Controllers
             //target.User.UserEmail
             //owner.UserEmail
             throw new NotImplementedException($"This function will send email");
+        }
+
+        private string GetIndexNameByUser()
+        {
+            var user = _userManager.GetUserAsync(User).Result;
+            return user.Role switch
+            {
+                MyLandUser.ROLE_AGENT => nameof(AgentIndex),
+                MyLandUser.ROLE_MODERATOR => nameof(ModerateIndex),
+                _ => nameof(Index)
+            };
         }
 
         private bool PropertyExists(int id)
