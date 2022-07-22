@@ -118,6 +118,11 @@ namespace MyLand.Controllers
             {
                 return View("Create", property);
             }
+            var count = _context.Property.Count() + 1;
+            var snsService = new SNSService();
+            var arn = await snsService.CreateTopic("PropertyNotificationFor" + count);
+            await snsService.AddSubscriptionAsync(property.User.Email, arn);
+            property.topicArn = arn;
             _context.Add(property);
             await _context.SaveChangesAsync();
             return RedirectToAction(GetIndexNameByUser());
@@ -206,6 +211,8 @@ namespace MyLand.Controllers
             await S3Service.DeleteImage(property.Photo);
             _context.Property.Remove(property);
             await _context.SaveChangesAsync();
+            var snsService = new SNSService();
+            await snsService.DeleteTopic("PropertyNotificationFor" + property.Id);
             return RedirectToAction(nameof(ModerateIndex));
         }
 
@@ -214,16 +221,19 @@ namespace MyLand.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Notify(int? id)
         {
+            if (id == null)
+            {
+                return RedirectToAction("NOTFOUND", "App");
+            }
             var user = await _userManager.GetUserAsync(User);
             var property = await _context.Property.FindAsync(id);
             if (property == null)
             {
                 return RedirectToAction("NOTFOUND", "App");
             }
-            //TODO SNS
-            //target.User.UserEmail
-            //owner.UserEmail
-            throw new NotImplementedException($"This function will send email");
+            var notificationService = new NotificationService();
+            await notificationService.CallLambda(property.Title, user.FirstName + " " + user.LastName, property.topicArn);
+            return RedirectToAction(GetIndexNameByUser());
         }
 
         private string GetIndexNameByUser()
@@ -235,11 +245,6 @@ namespace MyLand.Controllers
                 MyLandUser.ROLE_MODERATOR => nameof(ModerateIndex),
                 _ => nameof(Index)
             };
-        }
-
-        private bool PropertyExists(int id)
-        {
-            return _context.Property.Any(e => e.Id == id);
         }
     }
 }

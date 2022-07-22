@@ -25,6 +25,8 @@ namespace MyLand.Models
         [Required]
         [Display(Name = "Activated")]
         public bool IsActive { get; set; }
+        
+        public string topicArn { get; set; }
     }
     
     public enum PropertyType
