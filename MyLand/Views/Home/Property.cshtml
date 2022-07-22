@@ -1,0 +1,68 @@
+﻿@using MyLand.Services
+@model Property
+
+@{
+    ViewBag.Title = "title";
+    var imageUrl = AWSHelper.getCloudFrontUrl() + "images/" + Model.Photo;
+}
+
+@section Styles
+{
+    <style>
+        #background {
+            display: grid;
+            width: 100%;
+            place-items: center;
+            background-size: cover;
+            background-position: 50%;
+            background-repeat: no-repeat;
+            opacity: .9;
+            min-height: 70vh;
+            background-image: url('@imageUrl');
+        }
+        
+    </style>
+}
+
+<div id="background"></div>
+
+<div class="row">
+    <div class="col-md-8">
+        <h1>@Model.Title</h1> <span class="badge bg-info">New!</span>
+        <h2>RM @Model.Price</h2>
+        <p>Description: @Model.Description</p>
+
+        <div class="alert alert-primary" role="alert">
+            Hurry Up Before anyone else!
+        </div>
+        <div class="py-2">
+            <h3>Property Detail</h3>
+            <hr>
+            <h4>Property Type : @Model.Type</h4>
+            <h4>Property Size : @Model.Size m<sup>2</sup> </h4>
+            <h4>Owner: @Model.User.FirstName @Model.User.LastName</h4>
+        </div>
+    </div>
+    <div class="col-md-4 py-3">
+        <div class="card">
+            <img src="/hero.png" class="card-img-top" alt="Company Logo" style="width: 40%;margin:auto">
+            <hr>
+            <div class="card-body">
+                <h5 class="card-title">@Model.User.FirstName @Model.User.LastName</h5>
+                <p class="card-text">Tel : @Model.User.Telephone</p>
+                <p class="card-text">Email : @Model.User.Email</p>
+                <div class="d-grid">
+                    <form asp-action="Notify" asp-controller="Properties" method="POST" id="send-message">
+                            <input type="hidden" asp-for="Id" />
+                    </form>
+                    <a class="btn btn-primary" role="button" onclick="document.getElementById('send-message').submit();">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+                            <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"></path>
+                        </svg>
+                        I am interested!
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -27,8 +27,32 @@ namespace MyLand.Controllers
             var properties = _context.Property
                 .Include(m => m.User)
                 .Where(m => m.IsActive == true)
+                .OrderBy(r => Guid.NewGuid())
                 .Take(3)
                 .ToList();
+            return View(properties);
+        }
+
+        public IActionResult Property(string title)
+        {
+            var property = _context.Property
+                .Include(m => m.User)
+                .Where(m => m.IsActive == true)
+                .FirstOrDefault(m => m.Title == title);
+            if (property == null)
+            {
+                return RedirectToAction("NotFound", "App");
+            }
+            return View(property);
+        }
+        
+        public IActionResult Properties()
+        {
+            var properties = _context.Property
+                .Include(m => m.User)
+                .Where(m => m.IsActive == true)
+                .ToList();
+            
             return View(properties);
         }
 

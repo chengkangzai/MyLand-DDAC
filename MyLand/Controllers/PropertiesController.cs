@@ -233,7 +233,7 @@ namespace MyLand.Controllers
             }
             var notificationService = new NotificationService();
             await notificationService.CallLambda(property.Title, user.FirstName + " " + user.LastName, property.topicArn);
-            return RedirectToAction(GetIndexNameByUser());
+            return Redirect(Request.Headers["Referer"].ToString());
         }
 
         private string GetIndexNameByUser()

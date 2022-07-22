@@ -63,6 +63,10 @@
     }
     @if (role == "Guest")
     {
+        
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="Home" asp-action="Properties">Properties</a>
+        </li>
         <li class="nav-item">
             <a class="nav-link" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
         </li>
