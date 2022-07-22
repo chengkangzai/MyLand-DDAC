@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\CCK\\source\\repos\\MyLand\\MyLand\\MyLand.csproj": {}
+    "C:\\Users\\CCK\\RiderProjects\\MyLand-DDAC\\MyLand\\MyLand.csproj": {}
   },
   "projects": {
-    "C:\\Users\CCK\\source\\repos\\MyLand\\MyLand\\MyLand.csproj": {
+    "C:\\Users\\CCK\\RiderProjects\\MyLand-DDAC\\MyLand\\MyLand.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\CCK\\source\\repos\\MyLand\\MyLand\\MyLand.csproj",
+        "projectUniqueName": "C:\\Users\\CCK\\RiderProjects\\MyLand-DDAC\\MyLand\\MyLand.csproj",
         "projectName": "MyLand",
-        "projectPath": "C:\\Users\\CCK\\source\\repos\\MyLand\\MyLand\\MyLand.csproj",
+        "projectPath": "C:\\Users\\CCK\\RiderProjects\\MyLand-DDAC\\MyLand\\MyLand.csproj",
         "packagesPath": "C:\\Users\\CCK\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\CCK\\source\\repos\\MyLand\\MyLand\\obj\\",
+        "outputPath": "C:\\Users\\CCK\\RiderProjects\\MyLand-DDAC\\MyLand\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
           "C:\\Users\\CCK\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -44,6 +40,10 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "dependencies": {
+            "AWSSDK.S3": {
+              "target": "Package",
+              "version": "[3.7.9.23, )"
+            },
             "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
               "target": "Package",
               "version": "[3.1.25, )"

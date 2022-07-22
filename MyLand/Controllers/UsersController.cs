@@ -28,84 +28,93 @@ namespace MyLand.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user.Role != MyLandUser.ROLE_ADMIN)
+            if (user.Role != MyLandUser.ROLE_MODERATOR)
             {
                 return Unauthorized();
             }
             var users = await _userManager.Users.ToListAsync();
-            foreach (var item in users)
-            {
-                user.Address = item.Role == MyLandUser.ROLE_ADMIN ? "Admin" : "User";
-            }
             return View(users);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Show(string id)
+        {
+            if (id == "")
+            {
+                return RedirectToAction("NotFound", "App");
+            }
+            var user = await _userManager.GetUserAsync(User);
+            if (user.Role != MyLandUser.ROLE_MODERATOR)
+            {
+                return RedirectToAction("Unauthorized", "App");
+            }
+            var userToShow = await _userManager.FindByIdAsync(id);
+            if (userToShow == null)
+            {
+                return RedirectToAction("NotFound", "App");
+            }
+            return View(userToShow);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditRole(string id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user.Role != MyLandUser.ROLE_MODERATOR)
+            {
+                return RedirectToAction("Unauthorized", "App");
+            }
+            var userToEdit = await _userManager.FindByIdAsync(id);
+            if (userToEdit == null)
+            {
+                return RedirectToAction("NotFound", "App");
+            }
+
+            return View(userToEdit);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateRole([FromForm] string id, [FromForm] int role)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user.Role != MyLandUser.ROLE_MODERATOR)
+            {
+                return RedirectToAction("Unauthorized", "App");
+            }
+            if (id == null)
+            {
+                return RedirectToAction("NotFound", "App");
+            }
+            var targetUser = await _userManager.FindByIdAsync(id);
+            if (targetUser == null)
+            {
+                return RedirectToAction("NotFound", "App");
+            }
+            targetUser.Role = role;
+            await _userManager.UpdateAsync(targetUser);
+            return RedirectToAction(nameof(Index));
+        }
+
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(string username)
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user.Role != MyLandUser.ROLE_ADMIN)
+            if (user.Role != MyLandUser.ROLE_MODERATOR)
             {
-                return Unauthorized();
+                return RedirectToAction("Unauthorized", "App");
             }
             if (username == null)
             {
-                return NotFound();
+                return RedirectToAction("NotFound", "App");
             }
             var targetUser = await _userManager.FindByNameAsync(username);
             if (targetUser == null)
             {
-                return NotFound();
+                return RedirectToAction("NotFound", "App");
             }
             await _userManager.DeleteAsync(targetUser);
-            return RedirectToAction(nameof(Index));
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> MakeUser(string username)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user.Role != MyLandUser.ROLE_ADMIN)
-            {
-                return NotFound($"Only admin may change role");
-            }
-            if (username == null)
-            {
-                return NotFound();
-            }
-            var targetUser = await _userManager.FindByNameAsync(username);
-            if (targetUser == null)
-            {
-                return NotFound();
-            }
-            targetUser.Role = MyLandUser.ROLE_USER;
-            await _userManager.UpdateAsync(targetUser);
-            return RedirectToAction(nameof(Index));
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> MakeAdmin(string username)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user.Role != MyLandUser.ROLE_ADMIN)
-            {
-                return NotFound($"Only admin may change role");
-            }
-
-            if (username == null)
-            {
-                return NotFound();
-            }
-            var targetUser = await _userManager.FindByNameAsync(username);
-            if (targetUser == null)
-            {
-                return NotFound();
-            }
-            targetUser.Role = MyLandUser.ROLE_ADMIN;
-            await _userManager.UpdateAsync(targetUser);
             return RedirectToAction(nameof(Index));
         }
     }

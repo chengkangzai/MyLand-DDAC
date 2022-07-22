@@ -74,6 +74,9 @@ namespace MyLand.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+            
+            [Display(Name = "Register as...")]
+            public int Role { get; set; }
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -90,12 +93,7 @@ namespace MyLand.Areas.Identity.Pages.Account
             {
                 return Page();
             }
-
-            var userRole = MyLandUser.ROLE_USER;
-            if (Input.Email == "admin@myland.com")
-            {
-                userRole = MyLandUser.ROLE_ADMIN;
-            }
+            var userRole = Input.Email == "admin@myland.com" ? MyLandUser.ROLE_MODERATOR : Input.Role;
             var user = new MyLandUser
             {
                 UserName = Input.Email,
