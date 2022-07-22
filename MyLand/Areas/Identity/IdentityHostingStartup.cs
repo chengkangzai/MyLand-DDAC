@@ -15,10 +15,10 @@ namespace MyLand.Areas.Identity
     {
         public void Configure(IWebHostBuilder builder)
         {
-            builder.ConfigureServices((context, services) => {
+            builder.ConfigureServices((context, services) =>
+            {
                 services.AddDbContext<MyLandContext>(options =>
-                    options.UseSqlServer(
-                        context.Configuration.GetConnectionString("MyLandContextConnection")));
+                    options.UseSqlServer(context.Configuration.GetConnectionString("MyLandContextConnection")).AddXRayInterceptor());
 
                 services.AddDefaultIdentity<MyLandUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()

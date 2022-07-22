@@ -52,6 +52,30 @@
               "target": "Package",
               "version": "[3.7.3.83, )"
             },
+            "AWSSDK.XRay": {
+              "target": "Package",
+              "version": "[3.7.0.183, )"
+            },
+            "AWSXRayRecorder.Core": {
+              "target": "Package",
+              "version": "[2.11.1, )"
+            },
+            "AWSXRayRecorder.Handlers.AspNetCore": {
+              "target": "Package",
+              "version": "[2.8.1, )"
+            },
+            "AWSXRayRecorder.Handlers.AwsSdk": {
+              "target": "Package",
+              "version": "[2.9.1, )"
+            },
+            "AWSXRayRecorder.Handlers.EntityFramework": {
+              "target": "Package",
+              "version": "[1.2.1, )"
+            },
+            "AWSXRayRecorder.Handlers.SqlServer": {
+              "target": "Package",
+              "version": "[2.8.1, )"
+            },
             "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
               "target": "Package",
               "version": "[3.1.25, )"
@@ -89,6 +113,12 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.NETCore.App.Host.linux-x64",
+              "version": "[3.1.24, 3.1.24]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -98,6 +128,11 @@
             }
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.202\\RuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "linux-x64": {
+          "#import": []
         }
       }
     }
