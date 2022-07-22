@@ -96,9 +96,9 @@ namespace MyLand.Controllers
         }
 
 
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(string username)
+        public async Task<IActionResult> Delete([FromForm] string username)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user.Role != MyLandUser.ROLE_MODERATOR)
@@ -109,7 +109,7 @@ namespace MyLand.Controllers
             {
                 return RedirectToAction("NotFound", "App");
             }
-            var targetUser = await _userManager.FindByNameAsync(username);
+            var targetUser = await _userManager.FindByIdAsync(username);
             if (targetUser == null)
             {
                 return RedirectToAction("NotFound", "App");

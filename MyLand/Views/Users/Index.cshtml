@@ -68,8 +68,6 @@
                 {
                     @class = "btn btn-primary"
                 })
-            </td>
-            <td>
                 @Html.ActionLink("Edit", "EditRole", new
                 {
                     id = item.Id
@@ -77,15 +75,11 @@
                 {
                     @class = "btn btn-info"
                 })
-            </td>
-            <td>
-                @Html.ActionLink("Delete", "Delete", new
-                {
-                    id = item.Id
-                }, new
-                {
-                    @class = "btn btn-danger"
-                })
+                <form asp-action="Delete" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="username" value="@item.Id" />
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
             </td>
         </tr>
     }
