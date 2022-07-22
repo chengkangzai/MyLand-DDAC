@@ -1,0 +1,23 @@
+﻿@using MyLand.Areas.Identity.Data
+@model MyLand.Areas.Identity.Data.MyLandUser
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h2>Change User Role</h2>
+
+<form action="@Url.Action("UpdateRole", "Users")" method="post">
+    <div class="form-group">
+        <label for="role">Role</label>
+        <select name="role" id="role" class="form-control">
+            <option value="@MyLandUser.ROLE_MODERATOR">Moderator</option>
+            <option value="@MyLandUser.ROLE_CUSTOMER">Customer</option>
+            <option value="@MyLandUser.ROLE_AGENT">Agent</option>
+        </select>
+    </div>
+    <input type="hidden" name="id" value="@Model.Id">
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+</form>

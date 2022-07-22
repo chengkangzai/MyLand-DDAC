@@ -32,7 +32,7 @@ namespace MyLand.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user.Role == MyLandUser.ROLE_USER)
+            if (user.Role == MyLandUser.ROLE_CUSTOMER)
             {
                 return RedirectToAction("UNAUTHORIZED", "App");
             }
@@ -60,7 +60,7 @@ namespace MyLand.Controllers
         public async Task<IActionResult> Moderate()
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user.Role != MyLandUser.ROLE_ADMIN)
+            if (user.Role != MyLandUser.ROLE_MODERATOR)
             {
                 return RedirectToAction("UNAUTHORIZED", "App");
             }
@@ -120,7 +120,7 @@ namespace MyLand.Controllers
             }
             _context.Add(property);
             await _context.SaveChangesAsync();
-            return RedirectToAction(user.Role == MyLandUser.ROLE_USER ? nameof(Manage) : nameof(Index));
+            return RedirectToAction(user.Role == MyLandUser.ROLE_CUSTOMER ? nameof(Manage) : nameof(Index));
         }
 
         // GET: Properties/Edit/5
@@ -160,7 +160,7 @@ namespace MyLand.Controllers
                 return RedirectToAction("NOTFOUND", "App");
             }
             var user = await _userManager.GetUserAsync(User);
-            if (!(target.User == user || user.Role == MyLandUser.ROLE_ADMIN))
+            if (!(target.User == user || user.Role == MyLandUser.ROLE_MODERATOR))
             {
                 return RedirectToAction("UNAUTHORIZED", "App");
             }
@@ -202,7 +202,7 @@ namespace MyLand.Controllers
         public async Task<IActionResult> Destroy(int? id)
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user.Role != MyLandUser.ROLE_ADMIN)
+            if (user.Role != MyLandUser.ROLE_MODERATOR)
             {
                 return RedirectToAction("UNAUTHORIZED", "App");
             }
@@ -236,7 +236,7 @@ namespace MyLand.Controllers
             {
                 return RedirectToAction("NOTFOUND", "App");
             }
-            if (!(user.Role == MyLandUser.ROLE_ADMIN || user == property.User))
+            if (!(user.Role == MyLandUser.ROLE_MODERATOR || user == property.User))
             {
                 return RedirectToAction("UNAUTHORIZED", "App");
             }

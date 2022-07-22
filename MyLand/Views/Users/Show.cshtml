@@ -1,0 +1,66 @@
+﻿@model MyLand.Areas.Identity.Data.MyLandUser
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h2>User Detail</h2>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.UserName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Address)
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => Model.UserName)
+        </td>
+        <td>
+            @Html.DisplayNameFor(modelItem => Model.FirstName)
+        </td>
+        <td>
+            @Html.DisplayNameFor(modelItem => Model.LastName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => Model.Address)
+        </td>
+       
+        <td>
+            @Html.ActionLink("Edit", "EditRole", new
+            {
+                id = Model.Id
+            }, new
+            {
+                @class = "btn btn-primary"
+            })
+
+            @Html.ActionLink("Delete", "Delete", new
+            {
+                id = Model.Id
+            }, new
+            {
+                @class = "btn btn-danger"
+            })
+        </td>
+    </tr>
+
+    </tbody>
+</table>
