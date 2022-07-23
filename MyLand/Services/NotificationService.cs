@@ -10,13 +10,15 @@ namespace MyLand.Services
     {
         const string Url = "https://blhirjn5a3.execute-api.us-east-1.amazonaws.com/default/Email-SendPropertyInterestEmail";
 
-        public async Task<bool> CallLambda(string propertyName, string customerName, string arn)
+        public async Task<bool> CallLambda(string propertyName, string customerName, string customerEmail, string customerTele, string arn)
         {
             var client = new HttpClient();
             var postData = new
             {
                 customerName,
                 propertyName,
+                customerEmail,
+                customerTele,
                 arn
             };
             var content = new StringContent(JsonConvert.SerializeObject(postData), Encoding.UTF8, "application/json");

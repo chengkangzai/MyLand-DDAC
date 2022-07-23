@@ -189,6 +189,32 @@ namespace MyLand.Controllers
             return RedirectToAction(GetIndexNameByUser());
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangeStatus(int? id)
+        {
+            if (id == null)
+            {
+                return RedirectToAction("NOTFOUND", "App");
+            }
+            var target = await _context.Property
+                .Include(m => m.User)
+                .FirstOrDefaultAsync(item => item.Id == id);
+            if (target == null)
+            {
+                return RedirectToAction("NOTFOUND", "App");
+            }
+            var user = await _userManager.GetUserAsync(User);
+            if (!(target.User == user || user.Role == MyLandUser.ROLE_MODERATOR))
+            {
+                return RedirectToAction("UNAUTHORIZED", "App");
+            }
+            target.IsActive = !target.IsActive;
+            _context.Update(target);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(GetIndexNameByUser());
+        }
+
         // POST: Properties/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -232,7 +258,12 @@ namespace MyLand.Controllers
                 return RedirectToAction("NOTFOUND", "App");
             }
             var notificationService = new NotificationService();
-            await notificationService.CallLambda(property.Title, user.FirstName + " " + user.LastName, property.topicArn);
+            await notificationService.CallLambda(
+                property.Title,
+                user.FirstName + " " + user.LastName,
+                user.Email,
+                user.Telephone.ToString(),
+                property.topicArn);
             return Redirect(Request.Headers["Referer"].ToString());
         }
 
