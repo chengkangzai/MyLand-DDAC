@@ -238,7 +238,7 @@ namespace MyLand.Controllers
             _context.Property.Remove(property);
             await _context.SaveChangesAsync();
             var snsService = new SNSService();
-            await snsService.DeleteTopic("PropertyNotificationFor" + property.Id);
+            await snsService.DeleteTopic("PropertyNotificationFor" + property.topicArn);
             return RedirectToAction(nameof(ModerateIndex));
         }
 
