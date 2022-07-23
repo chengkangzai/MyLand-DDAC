@@ -93,11 +93,24 @@ namespace MyLand.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
-            if (Input.FirstName != user.FirstName) { user.FirstName = Input.FirstName; }
-            if (Input.LastName != user.LastName) { user.LastName = Input.LastName; }
-            if (Input.Address != user.Address) { user.Address = Input.Address; }
-            if (Input.Telephone != user.Telephone) { user.Telephone = Input.Telephone; }
+            if (Input.FirstName != user.FirstName)
+            {
+                user.FirstName = Input.FirstName;
+            }
+            if (Input.LastName != user.LastName)
+            {
+                user.LastName = Input.LastName;
+            }
+            if (Input.Address != user.Address)
+            {
+                user.Address = Input.Address;
+            }
+            if (Input.Telephone != user.Telephone)
+            {
+                user.Telephone = Input.Telephone;
+            }
 
+            await _userManager.UpdateAsync(user);
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();
