@@ -106,13 +106,9 @@ namespace MyLand.Controllers
             property.IsActive = true;
             property.Date = DateTime.Now;
 
-            var images = Request.Form.Files;
-
-            foreach (var image in images)
-            {
-                await S3Service.UploadImages(image.FileName, image.OpenReadStream());
-            }
-            property.Photo = images.First().FileName;
+            var image = Request.Form.Files[0];
+            await S3Service.UploadImages(image.FileName, image.OpenReadStream());
+            property.Photo = image.FileName;
 
             if (!ModelState.IsValid)
             {
@@ -238,7 +234,7 @@ namespace MyLand.Controllers
             _context.Property.Remove(property);
             await _context.SaveChangesAsync();
             var snsService = new SNSService();
-            await snsService.DeleteTopic("PropertyNotificationFor" + property.topicArn);
+            await snsService.DeleteTopic(property.topicArn);
             return RedirectToAction(nameof(ModerateIndex));
         }
 
